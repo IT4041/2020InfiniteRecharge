@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.constants;
+package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 
@@ -15,8 +15,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 public class Constants {
     public static final class DriveConstants {
         public static final double kTrackwidthFoot = 3.9245892079521147;
-        public static final DifferentialDriveKinematics = 
-            new DifferentialDriveKinematics(kTrackwidthFoot);
+        public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthFoot);
 
     //found in the characterization tool suite
     public static final double ksVolts = 1.5;

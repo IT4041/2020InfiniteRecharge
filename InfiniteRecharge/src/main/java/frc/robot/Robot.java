@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
   private OI m_oi;
   private ArcadeDrive m_arcadeDrive;
-  private DriveTrain m_driveTrain;
+  public DriveTrain m_driveTrain;
 
   private boolean m_LimelightHasValidTarget = false;
   private double m_LimelightDriveCommand = 0.0;
