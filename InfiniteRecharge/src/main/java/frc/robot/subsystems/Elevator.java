@@ -13,19 +13,20 @@ import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-public class Indexer extends SubsystemBase {
+public class Elevator extends SubsystemBase {
 
-  private static final TalonSRX talon = new TalonSRX(RobotMap.IndexerTalon);
+  private static final TalonSRX talon1 = new TalonSRX(RobotMap.ElevatorTalon1); 
+  private static final TalonSRX talon2 = new TalonSRX(RobotMap.ElevatorTalon2); 
   /**
-   * Creates a new indexer.
+   * Creates a new Elevator.
    */
-  public Indexer() {
-    talon.configFactoryDefault();
+  public Elevator() {
+    talon1.configFactoryDefault();
+    talon2.configFactoryDefault();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
   }
 }

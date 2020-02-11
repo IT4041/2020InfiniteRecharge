@@ -8,6 +8,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotMap;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -16,36 +18,36 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeElbow extends SubsystemBase {
+
+  private CANSparkMax sparkMax;
+  private CANPIDController pidController;
+  private CANEncoder encoder;
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+
   /**
    * Creates a new IntakeElbow.
    */
-
-  private static final int deviceID = 30;
-  private CANSparkMax m_motor;
-  private CANPIDController m_pidController;
-  private CANEncoder m_encoder;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
-
+  
   public IntakeElbow() {
         // initialize motor
-        m_motor = new CANSparkMax(deviceID, MotorType.kBrushless);
+        sparkMax = new CANSparkMax(RobotMap.IntakeElbowSparkMax, MotorType.kBrushless);
 
         /**
          * The restoreFactoryDefaults method can be used to reset the configuration parameters
          * in the SPARK MAX to their factory default state. If no argument is passed, these
          * parameters will not persist between power cycles
          */
-        m_motor.restoreFactoryDefaults();
+        sparkMax.restoreFactoryDefaults();
     
         /**
          * In order to use PID functionality for a controller, a CANPIDController object
          * is constructed by calling the getPIDController() method on an existing
          * CANSparkMax object
          */
-        m_pidController = m_motor.getPIDController();
+        pidController = sparkMax.getPIDController();
     
         // Encoder object created to display position values
-        m_encoder = m_motor.getEncoder();
+        encoder = sparkMax.getEncoder();
     
         // PID coefficients
         kP = 0.0065; 
@@ -57,22 +59,22 @@ public class IntakeElbow extends SubsystemBase {
         kMinOutput = -1;
     
         // set PID coefficients
-        m_pidController.setP(kP);
-        m_pidController.setI(kI);
-        m_pidController.setD(kD);
-        m_pidController.setIZone(kIz);
-        m_pidController.setFF(kFF);
-        m_pidController.setOutputRange(kMinOutput, kMaxOutput);
+        pidController.setP(kP);
+        pidController.setI(kI);
+        pidController.setD(kD);
+        pidController.setIZone(kIz);
+        pidController.setFF(kFF);
+        pidController.setOutputRange(kMinOutput, kMaxOutput);
     
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("P Gain", kP);
-        SmartDashboard.putNumber("I Gain", kI);
-        SmartDashboard.putNumber("D Gain", kD);
-        SmartDashboard.putNumber("I Zone", kIz);
-        SmartDashboard.putNumber("Feed Forward", kFF);
-        SmartDashboard.putNumber("Max Output", kMaxOutput);
-        SmartDashboard.putNumber("Min Output", kMinOutput);
-        SmartDashboard.putNumber("Set Rotations", 0);
+        SmartDashboard.putNumber("IntakeElbow P Gain", kP);
+        SmartDashboard.putNumber("IntakeElbow I Gain", kI);
+        SmartDashboard.putNumber("IntakeElbow D Gain", kD);
+        SmartDashboard.putNumber("IntakeElbow I Zone", kIz);
+        SmartDashboard.putNumber("IntakeElbow Feed Forward", kFF);
+        SmartDashboard.putNumber("IntakeElbow Max Output", kMaxOutput);
+        SmartDashboard.putNumber("IntakeElbow Min Output", kMinOutput);
+        SmartDashboard.putNumber("IntakeElbow Set Rotations", 0);
 
   }
 
@@ -80,23 +82,23 @@ public class IntakeElbow extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
      // read PID coefficients from SmartDashboard
-     double p = SmartDashboard.getNumber("P Gain", 0);
-     double i = SmartDashboard.getNumber("I Gain", 0);
-     double d = SmartDashboard.getNumber("D Gain", 0);
-     double iz = SmartDashboard.getNumber("I Zone", 0);
-     double ff = SmartDashboard.getNumber("Feed Forward", 0);
-     double max = SmartDashboard.getNumber("Max Output", 0);
-     double min = SmartDashboard.getNumber("Min Output", 0);
-     double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+     double p = SmartDashboard.getNumber("IntakeElbow P Gain", 0);
+     double i = SmartDashboard.getNumber("IntakeElbow I Gain", 0);
+     double d = SmartDashboard.getNumber("IntakeElbow D Gain", 0);
+     double iz = SmartDashboard.getNumber("IntakeElbow I Zone", 0);
+     double ff = SmartDashboard.getNumber("IntakeElbow Feed Forward", 0);
+     double max = SmartDashboard.getNumber("IntakeElbow Max Output", 0);
+     double min = SmartDashboard.getNumber("IntakeElbow Min Output", 0);
+     double rotations = SmartDashboard.getNumber("IntakeElbow Set Rotations", 0);
  
      // if PID coefficients on SmartDashboard have changed, write new values to controller
-     if((p != kP)) { m_pidController.setP(p); kP = p; }
-     if((i != kI)) { m_pidController.setI(i); kI = i; }
-     if((d != kD)) { m_pidController.setD(d); kD = d; }
-     if((iz != kIz)) { m_pidController.setIZone(iz); kIz = iz; }
-     if((ff != kFF)) { m_pidController.setFF(ff); kFF = ff; }
+     if((p != kP)) { pidController.setP(p); kP = p; }
+     if((i != kI)) { pidController.setI(i); kI = i; }
+     if((d != kD)) { pidController.setD(d); kD = d; }
+     if((iz != kIz)) { pidController.setIZone(iz); kIz = iz; }
+     if((ff != kFF)) { pidController.setFF(ff); kFF = ff; }
      if((max != kMaxOutput) || (min != kMinOutput)) { 
-       m_pidController.setOutputRange(min, max); 
+       pidController.setOutputRange(min, max); 
        kMinOutput = min; kMaxOutput = max; 
      }
  
@@ -114,9 +116,9 @@ public class IntakeElbow extends SubsystemBase {
       *  com.revrobotics.ControlType.kVelocity
       *  com.revrobotics.ControlType.kVoltage
       */
-     m_pidController.setReference(rotations, ControlType.kPosition);
+     pidController.setReference(rotations, ControlType.kPosition);
      
-     SmartDashboard.putNumber("SetPoint", rotations);
-     SmartDashboard.putNumber("ProcessVariable", m_encoder.getPosition());
+     SmartDashboard.putNumber("IntakeElbow SetPoint", rotations);
+     SmartDashboard.putNumber("IntakeElbow ProcessVariable", encoder.getPosition());
   }
 }

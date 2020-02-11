@@ -10,11 +10,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-// import frc.robot.commands.ExampleCommand;
-// import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.subsystems.components.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -23,16 +22,20 @@ import frc.robot.subsystems.*;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-  private final Turret turret = new Turret();
-  private final ColorSensor colorSensor = new ColorSensor();
-  private final Camera camera = new Camera();
+  // The robot's subsystems and commands are defined here...
+  private final Elevator elevator = new Elevator();
+  private final ElevatorArm elevatorArm = new ElevatorArm();
   private final Indexer indexer = new Indexer();
   private final IntakeElbow intakeElbow = new IntakeElbow();
+  private final IntakeWheels intakeWheels = new IntakeWheels();
+  private final Shooter shooter = new Shooter();
+  private final Turret turret = new Turret();
 
+  //components
+  private final Camera camera = new Camera();
+  private final ColorSensor colorSensor = new ColorSensor();
+  private final RangeSensors rangeSensors = new RangeSensors();
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -59,7 +62,6 @@ public class RobotContainer {
 
     buttonX_dr.whenHeld((edu.wpi.first.wpilibj2.command.Command)new TurretStartTargeting(turret));
     buttonX_dr.whenReleased((edu.wpi.first.wpilibj2.command.Command)new TurretEndTargeting(turret));
-
 
   }
 

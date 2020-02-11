@@ -15,7 +15,7 @@ import frc.robot.OI;
  * An example command that uses an example subsystem.
  */
 public class ArcadeDrive extends CommandBase {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+
   private final DriveTrain my_driveTrain;
 
   /**

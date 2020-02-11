@@ -15,15 +15,21 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.*;
+import frc.robot.RobotMap;
 
 public class Turret extends PIDSubsystem {
 
-  private static final TalonSRX talon = new TalonSRX(6); 
-  private static final Encoder encoder = new Encoder(0, 1, true, Encoder.EncodingType.k4X);
+  private final TalonSRX talon = new TalonSRX(RobotMap.TurretTalon); 
+  private final Encoder encoder = new Encoder(RobotMap.TurretChannelA, RobotMap.TurretChannelB, true, Encoder.EncodingType.k4X);
 
   private double current = 0;
-  private double increment = 100;
+  private final double increment = 100;
   private boolean aquireTarget = false;
+
+  private final double gr = 208/24; // gear ration 208/24
+  private final double ppmr = 44.4; //pulses per motor revolution
+  private final double pptr = gr * ppmr; // pulses per turret revolution
+  private final double dptp = 360/pptr; // degrees per turret pulse
 
   public Turret() {
     super(
@@ -43,9 +49,9 @@ public class Turret extends PIDSubsystem {
     super.periodic(); 
     SmartDashboard.putNumber("Turret setpoint", current);
     SmartDashboard.putBoolean("Turret PID", this.isEnabled());
-    SmartDashboard.putBoolean("Running periodic", true);
+    SmartDashboard.putBoolean("Turret Running periodic", true);
     if(aquireTarget){
-      SmartDashboard.putBoolean("Aquire Target", true);
+      SmartDashboard.putBoolean("Turret Aquire Target", true);
       current = current + Update_Limelight_Tracking();
       SmartDashboard.putNumber("Turret setpoint", current);
       this.setSetpoint(current);
@@ -54,7 +60,7 @@ public class Turret extends PIDSubsystem {
       current = this.getMeasurement();
     }
     else{
-      SmartDashboard.putBoolean("Aquire Target", false);
+      SmartDashboard.putBoolean("Turret Aquire Target", false);
     }
 
   }
@@ -103,11 +109,6 @@ public class Turret extends PIDSubsystem {
 
   public double Update_Limelight_Tracking()
   {
-
-        final double gr = 208/24; // gear ration 208/24
-        final double ppmr = 44.4; //pulses per motor revolution
-        double pptr = gr * ppmr; // pulses per turret revolution
-        double dptp = 360/pptr; // degrees per turret pulse
         double steer_cmd = 0.0;
 
         double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
