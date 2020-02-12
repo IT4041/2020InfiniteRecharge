@@ -26,15 +26,17 @@ public class Turret extends PIDSubsystem {
   private final double increment = 100;
   private boolean aquireTarget = false;
 
-  private final double gr = 208/24; // gear ration 208/24
+  private final double gr = 208/36; // gear ration 208/36
   private final double ppmr = 44.4; //pulses per motor revolution
   private final double pptr = gr * ppmr; // pulses per turret revolution
   private final double dptp = 360/pptr; // degrees per turret pulse
 
+
+
   public Turret() {
     super(
         // The PIDController used by the subsystem
-        new PIDController(0.085, 0, 0.0001)
+        new PIDController(0.025, 0, 0.0001)
     );
 
         this.enable();

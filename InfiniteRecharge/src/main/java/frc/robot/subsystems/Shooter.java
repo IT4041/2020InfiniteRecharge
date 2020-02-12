@@ -22,7 +22,7 @@ public class Shooter extends SubsystemBase {
   private CANSparkMax sparkMax2;
   private CANPIDController pidController;
   private CANEncoder encoder;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
   /**
    * Creates a new Shooter.
    */
@@ -39,13 +39,14 @@ public class Shooter extends SubsystemBase {
     encoder = sparkMax1.getEncoder();
 
     // PID coefficients
-    kP = 0.0065; 
+    kP = 0.00065; 
     kI = 0;
     kD = 0; 
     kIz = 0; 
-    kFF = 0; 
+    kFF = 0.00001; 
     kMaxOutput = 1; 
     kMinOutput = -1;
+    maxRPM = 5700;
 
     // set PID coefficients
     pidController.setP(kP);
@@ -63,7 +64,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shooter Feed Forward", kFF);
     SmartDashboard.putNumber("shooter Max Output", kMaxOutput);
     SmartDashboard.putNumber("shooter Min Output", kMinOutput);
-    SmartDashboard.putNumber("shooter Set Rotations", 0);
+    SmartDashboard.putNumber("shooter Set Velocity", 0);
 
   }
 
@@ -78,7 +79,7 @@ public class Shooter extends SubsystemBase {
      double ff = SmartDashboard.getNumber("shooter Feed Forward", 0);
      double max = SmartDashboard.getNumber("shooter Max Output", 0);
      double min = SmartDashboard.getNumber("shooter Min Output", 0);
-     double rotations = SmartDashboard.getNumber("shooter Set Rotations", 0);
+     double velocity = SmartDashboard.getNumber("shooter Set Velocity", 0);
  
      // if PID coefficients on SmartDashboard have changed, write new values to controller
      if((p != kP)) { pidController.setP(p); kP = p; }
@@ -105,9 +106,10 @@ public class Shooter extends SubsystemBase {
       *  com.revrobotics.ControlType.kVelocity
       *  com.revrobotics.ControlType.kVoltage
       */
-    pidController.setReference(rotations, ControlType.kPosition);
-     
-     SmartDashboard.putNumber("shooter SetPoint", rotations);
-     SmartDashboard.putNumber("shooter ProcessVariable", encoder.getPosition());
+
+  
+    pidController.setReference(velocity, ControlType.kVelocity);
+    SmartDashboard.putNumber("shooter Desired velocity", velocity < maxRPM ? velocity : maxRPM );
+    SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
   }
 }

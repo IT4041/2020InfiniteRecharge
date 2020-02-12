@@ -12,8 +12,12 @@ import frc.robot.RobotMap;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import frc.robot.subsystems.components.RangeSensors;
 
 public class Indexer extends SubsystemBase {
+
+
+  private int ballCount = 0;
 
   private static final TalonSRX talon = new TalonSRX(RobotMap.IndexerTalon);
   /**
@@ -21,11 +25,33 @@ public class Indexer extends SubsystemBase {
    */
   public Indexer() {
     talon.configFactoryDefault();
+    talon.set(ControlMode.PercentOutput, -0.4);// negative is up
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
+    if(RangeSensors.iSeeABall()){
+      addBall();
+    }
   }
+
+  public void addBall(){
+    ballCount ++;
+  }
+
+public void emptyTheTank(){
+  //function get called when we shoot
+  ballCount = 0;
+}
+
+public void intake(){
+  talon.set(ControlMode.PercentOutput, 0.4);
+
+}
+
+public void backOff(){
+  talon.set(ControlMode.PercentOutput, -0.4);
+}
+  
 }

@@ -54,10 +54,10 @@ public class DriveTrain extends SubsystemBase {
 
    private void init(){
      
-    frontRightTalon.setNeutralMode(NeutralMode.Brake);
-    frontLeftTalon.setNeutralMode(NeutralMode.Brake);
-    backRightTalon.setNeutralMode(NeutralMode.Brake);
-    backLeftTalon.setNeutralMode(NeutralMode.Brake);
+    frontRightTalon.setNeutralMode(NeutralMode.Coast);
+    frontLeftTalon.setNeutralMode(NeutralMode.Coast);
+    backRightTalon.setNeutralMode(NeutralMode.Coast);
+    backLeftTalon.setNeutralMode(NeutralMode.Coast);
     topRightTalon.setNeutralMode(NeutralMode.Brake);
     topLeftTalon.setNeutralMode(NeutralMode.Brake);
 
