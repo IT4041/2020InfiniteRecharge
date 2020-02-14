@@ -15,6 +15,8 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Indexer;
 
 public class Shooter extends SubsystemBase {
   
@@ -22,11 +24,24 @@ public class Shooter extends SubsystemBase {
   private CANSparkMax sparkMax2;
   private CANPIDController pidController;
   private CANEncoder encoder;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, minRPM;
+  private Turret m_Turret;
+  private Indexer m_Indexer;
+
+  //values for rpm calculation
+  private double multiplier = 26.5; //rpm multiplier
+
+  private double compensator = 1.15;
+  private double velocity = 0.0;
+  private double rpm_tolerance = 45.0;
+
   /**
    * Creates a new Shooter.
    */
-  public Shooter() {
+  public Shooter(Turret in_Turret, Indexer in_Indexer) {
+    m_Turret = in_Turret;
+    m_Indexer = in_Indexer;
+
     sparkMax1 = new CANSparkMax(RobotMap.ShooterSparkMax1, MotorType.kBrushless);//31
     sparkMax2 = new CANSparkMax(RobotMap.ShooterSparkMax2, MotorType.kBrushless);
 
@@ -39,14 +54,15 @@ public class Shooter extends SubsystemBase {
     encoder = sparkMax1.getEncoder();
 
     // PID coefficients
-    kP = 0.00065; 
+    kP = 0.001; 
     kI = 0;
-    kD = 0; 
+    kD = 0.00002; 
     kIz = 0; 
-    kFF = 0.00001; 
+    kFF = 0.00002; 
     kMaxOutput = 1; 
     kMinOutput = -1;
-    maxRPM = 5700;
+    maxRPM = 6550;
+    minRPM = 3300;
 
     // set PID coefficients
     pidController.setP(kP);
@@ -56,60 +72,83 @@ public class Shooter extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    // display PID coefficients on SmartDashboard
-    SmartDashboard.putNumber("shooter P Gain", kP);
-    SmartDashboard.putNumber("shooter I Gain", kI);
-    SmartDashboard.putNumber("shooter D Gain", kD);
-    SmartDashboard.putNumber("shooter I Zone", kIz);
-    SmartDashboard.putNumber("shooter Feed Forward", kFF);
-    SmartDashboard.putNumber("shooter Max Output", kMaxOutput);
-    SmartDashboard.putNumber("shooter Min Output", kMinOutput);
-    SmartDashboard.putNumber("shooter Set Velocity", 0);
+    // SmartDashboard.putNumber("shooter multiplier", multiplier);
+    // SmartDashboard.putNumber("shooter compensator", compensator);
+    SmartDashboard.putBoolean("shooter at rpm", false);
+    SmartDashboard.putNumber("shooter Desired velocity", 0);
+    SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
+    SmartDashboard.putNumber("shooter distance", 0);
+    SmartDashboard.putNumber("shooter compensated rpms",  0);
+    SmartDashboard.putNumber("shooter expected rpms",  0);
 
   }
 
   @Override
   public void periodic() {
-      // This method will be called once per scheduler run
-     // read PID coefficients from SmartDashboard
-     double p = SmartDashboard.getNumber("shooter P Gain", 0);
-     double i = SmartDashboard.getNumber("shooter I Gain", 0);
-     double d = SmartDashboard.getNumber("shooter D Gain", 0);
-     double iz = SmartDashboard.getNumber("shooter I Zone", 0);
-     double ff = SmartDashboard.getNumber("shooter Feed Forward", 0);
-     double max = SmartDashboard.getNumber("shooter Max Output", 0);
-     double min = SmartDashboard.getNumber("shooter Min Output", 0);
-     double velocity = SmartDashboard.getNumber("shooter Set Velocity", 0);
- 
-     // if PID coefficients on SmartDashboard have changed, write new values to controller
-     if((p != kP)) { pidController.setP(p); kP = p; }
-     if((i != kI)) { pidController.setI(i); kI = i; }
-     if((d != kD)) { pidController.setD(d); kD = d; }
-     if((iz != kIz)) { pidController.setIZone(iz); kIz = iz; }
-     if((ff != kFF)) { pidController.setFF(ff); kFF = ff; }
-     if((max != kMaxOutput) || (min != kMinOutput)) { 
-      pidController.setOutputRange(min, max); 
-       kMinOutput = min; kMaxOutput = max; 
-     }
- 
-     /**
-      * PIDController objects are commanded to a set point using the 
-      * SetReference() method.
-      * 
-      * The first parameter is the value of the set point, whose units vary
-      * depending on the control type set in the second parameter.
-      * 
-      * The second parameter is the control type can be set to one of four 
-      * parameters:
-      *  com.revrobotics.ControlType.kDutyCycle
-      *  com.revrobotics.ControlType.kPosition
-      *  com.revrobotics.ControlType.kVelocity
-      *  com.revrobotics.ControlType.kVoltage
-      */
 
-  
-    pidController.setReference(velocity, ControlType.kVelocity);
-    SmartDashboard.putNumber("shooter Desired velocity", velocity < maxRPM ? velocity : maxRPM );
-    SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
+    // velocity is 115% of actual  
+    if(m_Turret.OnTarget()){
+      velocity = calculateRPMs();
+      pidController.setReference(velocity, ControlType.kVelocity);
+      SmartDashboard.putNumber("shooter Desired velocity", velocity );
+      SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
+      
+      if(atRPM()){
+        m_Indexer.shooting();
+      }
+    }
+
+    SmartDashboard.putBoolean("shooter at rpm", atRPM());
   }
+
+  private double calculateRPMs(){
+
+    double finalRPMS;
+    double distance = m_Turret.distanceToTarget();
+    double calcRPMs = distance * multiplier * compensator;
+
+    finalRPMS = (calcRPMs < maxRPM ? calcRPMs : maxRPM);
+    finalRPMS = (calcRPMs < minRPM ? minRPM : calcRPMs);
+
+    SmartDashboard.putNumber("shooter compensated rpms", finalRPMS);
+    SmartDashboard.putNumber("shooter expected rpms",  finalRPMS * 0.85);
+    SmartDashboard.putNumber("shooter distance", distance);
+
+    return finalRPMS;
+  }
+
+  private boolean atRPM(){
+
+    double convertBack = 1.1764705885;
+
+    boolean atSpeed = false;
+    double measuredVelo = encoder.getVelocity();
+    double compMeasured = measuredVelo * compensator;
+    compMeasured = (measuredVelo * compensator < minRPM ? minRPM * 0.85 : (measuredVelo * compensator));
+
+    if( compMeasured < (velocity + rpm_tolerance) && compMeasured > (velocity - rpm_tolerance)){
+      atSpeed = true;
+    }
+    return atSpeed;
+  }
+
+  public void endShooting(){
+    velocity = 0.0;
+    pidController.setReference(velocity, ControlType.kVelocity);
+    pidController.setP(0.0);
+    pidController.setI(0.0);
+    pidController.setD(0.0);
+    pidController.setIZone(0.0);
+    pidController.setFF(0.0);
+    m_Indexer.endShooting();
+  }
+
+  public void startShooting(){
+    pidController.setP(kP);
+    pidController.setI(kI);
+    pidController.setD(kD);
+    pidController.setIZone(kIz);
+    pidController.setFF(kFF);
+  }
+
 }

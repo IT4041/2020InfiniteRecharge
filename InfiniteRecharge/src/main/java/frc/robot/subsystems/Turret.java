@@ -23,50 +23,55 @@ public class Turret extends PIDSubsystem {
   private final Encoder encoder = new Encoder(RobotMap.TurretChannelA, RobotMap.TurretChannelB, true, Encoder.EncodingType.k4X);
 
   private double current = 0;
-  private final double increment = 100;
   private boolean aquireTarget = false;
+  private boolean onTarget = false;
 
   private final double gr = 208/36; // gear ration 208/36
   private final double ppmr = 44.4; //pulses per motor revolution
   private final double pptr = gr * ppmr; // pulses per turret revolution
   private final double dptp = 360/pptr; // degrees per turret pulse
 
-
-
   public Turret() {
     super(
         // The PIDController used by the subsystem
-        new PIDController(0.025, 0, 0.0001)
+        new PIDController(0.0425, 0, 0.0003)
     );
 
-        this.enable();
-        talon.configFactoryDefault();
-        encoder.reset();
-        
+    this.enable();
+    talon.configFactoryDefault();
+    encoder.reset();
+    super.m_controller.setTolerance(2);
+    
   }
 
   @Override
   public void periodic() {
 
     super.periodic(); 
+    SmartDashboard.putNumber("Turret distance", distanceToTarget());
+    SmartDashboard.putBoolean("atSetpoint", super.m_controller.atSetpoint());
     SmartDashboard.putNumber("Turret setpoint", current);
     SmartDashboard.putBoolean("Turret PID", this.isEnabled());
     SmartDashboard.putBoolean("Turret Running periodic", true);
+
     if(aquireTarget){
       SmartDashboard.putBoolean("Turret Aquire Target", true);
       current = current + Update_Limelight_Tracking();
       SmartDashboard.putNumber("Turret setpoint", current);
       this.setSetpoint(current);
       Timer.delay(0.001);
-
       current = this.getMeasurement();
     }
     else{
       SmartDashboard.putBoolean("Turret Aquire Target", false);
     }
 
+    double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+    onTarget = super.m_controller.atSetpoint() && ta > 1;
+
   }
 
+  // PID functions *****************************************
   @Override
   public void useOutput(double output, double setpoint) {
     // Use the output here
@@ -81,24 +86,13 @@ public class Turret extends PIDSubsystem {
     SmartDashboard.putNumber("Turret PID process variable", value);
     return value;
   }
+  //end PID *******************************
 
-  public void changeSetPoint(){
-    current = current + increment;
-    SmartDashboard.putNumber("Turret setpoint", current);
-    this.setSetpoint(current);
-
-  }
-
-  public void changeSetPointBack(){
-    current = current - increment;
-    SmartDashboard.putNumber("Turret setpoint", current);
-    this.setSetpoint(current);
-
-  }
-
+  // OI function **************************
   public void startTargeting(){
     this.aquireTarget = true;
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+    
 
   }
 
@@ -108,8 +102,9 @@ public class Turret extends PIDSubsystem {
     current = 0;
     this.setSetpoint(current);
   }
+  // end OI functions ***************************
 
-  public double Update_Limelight_Tracking()
+  private double Update_Limelight_Tracking()
   {
         double steer_cmd = 0.0;
 
@@ -125,4 +120,18 @@ public class Turret extends PIDSubsystem {
         SmartDashboard.putNumber("Turret Change", steer_cmd);
         return steer_cmd;
   }
+
+  public boolean OnTarget(){
+    return onTarget;
+  }
+
+  public double distanceToTarget(){
+
+    //dist=k/Math.sqrt(area); 
+    double k = 166.13; //14.925;
+    double area = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+
+    return  Math.round(k/ Math.sqrt(area));//inches
+  }
+
 }

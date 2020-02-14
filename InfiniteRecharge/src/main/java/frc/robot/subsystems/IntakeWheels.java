@@ -21,10 +21,22 @@ public class IntakeWheels extends SubsystemBase {
    */
   public IntakeWheels() {
     talon.configFactoryDefault();
+    talon.configContinuousCurrentLimit(18);
+    talon.configPeakCurrentLimit(40);
+    talon.configPeakCurrentDuration(1000);
+    talon.enableCurrentLimit(true);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void on(){
+    talon.set(ControlMode.PercentOutput, -0.65);
+  }
+
+  public void off(){
+    talon.set(ControlMode.PercentOutput, 0.0); 
   }
 }

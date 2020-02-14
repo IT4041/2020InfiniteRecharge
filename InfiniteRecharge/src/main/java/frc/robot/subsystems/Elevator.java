@@ -15,14 +15,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Elevator extends SubsystemBase {
 
-  private static final TalonSRX talon1 = new TalonSRX(RobotMap.ElevatorTalon1); 
-  private static final TalonSRX talon2 = new TalonSRX(RobotMap.ElevatorTalon2); 
+  // private static final TalonSRX talon1 = new TalonSRX(RobotMap.ElevatorTalon1); 
+  // private static final TalonSRX talon2 = new TalonSRX(RobotMap.ElevatorTalon2); 
   /**
    * Creates a new Elevator.
    */
   public Elevator() {
-    talon1.configFactoryDefault();
-    talon2.configFactoryDefault();
+    // talon1.configFactoryDefault();
+    // talon2.configFactoryDefault();
   }
 
   @Override

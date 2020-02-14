@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
@@ -16,42 +18,92 @@ import frc.robot.subsystems.components.RangeSensors;
 
 public class Indexer extends SubsystemBase {
 
-
   private int ballCount = 0;
+  private RangeSensors m_sensors;
+  private boolean frontOfBall = false;
+  private boolean backOfBall = false;
+  private boolean shooting = false;
+  private boolean backedOff = false;
 
   private static final TalonSRX talon = new TalonSRX(RobotMap.IndexerTalon);
   /**
    * Creates a new indexer.
    */
-  public Indexer() {
+  public Indexer(RangeSensors rangeSensors) {
     talon.configFactoryDefault();
-    talon.set(ControlMode.PercentOutput, -0.4);// negative is up
+    talon.configFactoryDefault();
+    talon.configContinuousCurrentLimit(18);
+    talon.configPeakCurrentLimit(40);
+    talon.configPeakCurrentDuration(1000);
+    talon.enableCurrentLimit(true);
+    m_sensors = rangeSensors;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(RangeSensors.iSeeABall()){
-      addBall();
+
+    if(!shooting){
+      if(ballCount < 2){
+
+        if(m_sensors.iSeeABall()){
+          talon.set(ControlMode.PercentOutput, -0.85);
+          frontOfBall = true;
+        }
+        else{
+          talon.set(ControlMode.PercentOutput, 0.0);
+          if(frontOfBall){
+            backOfBall = true;
+          }
+        }
+
+        if(backOfBall && frontOfBall){
+          addBall();
+          frontOfBall = false;
+          backOfBall = false;
+        }
+      }else if (ballCount == 2 && !backedOff){
+        backOff();
+      }
     }
+
+    SmartDashboard.putBoolean("fb", frontOfBall);
+    SmartDashboard.putBoolean("bb", backOfBall);
+    SmartDashboard.putNumber("ballCount", ballCount);
+
   }
 
-  public void addBall(){
+  private void addBall(){
     ballCount ++;
   }
 
-public void emptyTheTank(){
-  //function get called when we shoot
-  ballCount = 0;
-}
+  private void emptyTheTank(){
+    //function get called when we shoot
+    ballCount = 0;
+  }
+  
+  private void backOff(){
+    talon.set(ControlMode.PercentOutput, 0.4);
+    Timer.delay(0.1);
+    talon.set(ControlMode.PercentOutput, 0.0);
+    backedOff = true;
+  }
 
-public void intake(){
-  talon.set(ControlMode.PercentOutput, 0.4);
+  private void On(){
+    talon.set(ControlMode.PercentOutput, -0.85);
+    
+  }
 
-}
+  public void shooting(){
+    emptyTheTank();
+    On();
+    shooting = true;
+    backedOff = false;
+  }
 
-public void backOff(){
-  talon.set(ControlMode.PercentOutput, -0.4);
-}
+  public void endShooting(){
+    shooting = false;
+    talon.set(ControlMode.PercentOutput, 0.0);
+  }
   
 }

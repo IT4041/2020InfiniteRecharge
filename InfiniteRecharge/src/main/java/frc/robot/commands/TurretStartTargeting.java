@@ -9,15 +9,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter;
 
 public class TurretStartTargeting extends CommandBase {
 
   private final Turret m_Turret;
+  private final Shooter m_shooter;
 
-  public TurretStartTargeting(Turret in_turret) {
+  public TurretStartTargeting(Turret in_turret, Shooter in_shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_Turret = in_turret;
+    m_shooter = in_shooter;
     addRequirements(m_Turret);
+    addRequirements(m_shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -29,6 +33,7 @@ public class TurretStartTargeting extends CommandBase {
   @Override
   public void execute() {
     m_Turret.startTargeting();
+    m_shooter.startShooting();
   }
 
   // Called once the command ends or is interrupted.

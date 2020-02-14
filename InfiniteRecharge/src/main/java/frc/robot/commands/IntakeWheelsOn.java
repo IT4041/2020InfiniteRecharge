@@ -8,20 +8,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.IntakeWheels;
 
-public class TurretEndTargeting extends CommandBase {
+public class IntakeWheelsOn extends CommandBase {
 
-  private final Turret m_Turret;
-  private final Shooter m_shooter;
-
-  public TurretEndTargeting(Turret in_turret, Shooter in_shooter) {
+  private final IntakeWheels m_IntakeWheels;
+  /**
+   * Creates a new IntakeDown.
+   */
+  public IntakeWheelsOn(IntakeWheels in_IntakeWheels) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Turret = in_turret;
-    m_shooter = in_shooter;
-    addRequirements(m_Turret);
-    addRequirements(m_shooter);
+    m_IntakeWheels = in_IntakeWheels;
+    addRequirements(m_IntakeWheels);
   }
 
   // Called when the command is initially scheduled.
@@ -32,8 +30,7 @@ public class TurretEndTargeting extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Turret.endTargeting();
-    m_shooter.endShooting();
+    m_IntakeWheels.on();
   }
 
   // Called once the command ends or is interrupted.

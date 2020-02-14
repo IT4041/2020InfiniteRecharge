@@ -49,7 +49,7 @@ public class RobotMap {
 
 	//Elevator
 	public static final int ElevatorTalon1 = 1;
-	public static final int ElevatorTalon2 = 2;
+	public static final int ElevatorTalon2 = 3;
 	//end Elevator
 	
     //start xbox *****************************************

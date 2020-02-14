@@ -16,12 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RangeSensors extends SubsystemBase {
 
-   static double ballThreshold = 60;//tbd
-
+   static double ballThreshold = 350;//tbd
 
   // Create instance of Time-Of_Flight driver for device 1 & 2
   //private final TimeOfFlight rangeSensor1 = new TimeOfFlight(RobotMap.TimeOfFlight1);
-  private static final TimeOfFlight rangeSensor2 = new TimeOfFlight(RobotMap.TimeOfFlight2);
+  private final TimeOfFlight rangeSensor2 = new TimeOfFlight(RobotMap.TimeOfFlight2);
   /**
    * Creates a new RangeSensors.
    */
@@ -46,8 +45,7 @@ public class RangeSensors extends SubsystemBase {
   }
 
 
-  public static boolean iSeeABall(){
-
+  public boolean iSeeABall(){
     return rangeSensor2.getRange() < ballThreshold;
   }
 }

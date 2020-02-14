@@ -8,16 +8,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Indexer;
 
-public class TurretTest extends CommandBase {
+public class LiftBalls extends CommandBase {
 
-  private final Turret m_Turret;
+  private final Indexer m_Indexer;
 
-  public TurretTest(Turret in_turret) {
+  /**
+   * Creates a new LiftBalls.
+   */
+  public LiftBalls(Indexer in_Indexer) {
+    m_Indexer = in_Indexer;
+    addRequirements(m_Indexer);
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Turret = in_turret;
-    addRequirements(m_Turret);
   }
 
   // Called when the command is initially scheduled.
@@ -28,7 +31,6 @@ public class TurretTest extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Turret.changeSetPoint();
   }
 
   // Called once the command ends or is interrupted.

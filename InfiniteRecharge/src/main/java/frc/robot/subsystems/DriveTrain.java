@@ -60,6 +60,7 @@ public class DriveTrain extends SubsystemBase {
     backLeftTalon.setNeutralMode(NeutralMode.Coast);
     topRightTalon.setNeutralMode(NeutralMode.Brake);
     topLeftTalon.setNeutralMode(NeutralMode.Brake);
+    //todo:current limits
 
     robotDrive.setExpiration(1);
     robotDrive.setSafetyEnabled(false);

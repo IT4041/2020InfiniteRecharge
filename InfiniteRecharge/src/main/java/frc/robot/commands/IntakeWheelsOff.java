@@ -8,16 +8,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.IntakeWheels;
 
-public class TurretTestBack extends CommandBase {
+public class IntakeWheelsOff extends CommandBase {
 
-  private final Turret m_Turret;
-
-  public TurretTestBack(Turret in_turret) {
+  private final IntakeWheels m_IntakeWheels;
+  /**
+   * Creates a new IntakeDown.
+   */
+  public IntakeWheelsOff(IntakeWheels in_IntakeWheels) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Turret = in_turret;
-    addRequirements(m_Turret);
+    m_IntakeWheels = in_IntakeWheels;
+    addRequirements(m_IntakeWheels);
   }
 
   // Called when the command is initially scheduled.
@@ -28,7 +30,7 @@ public class TurretTestBack extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Turret.changeSetPointBack();
+    m_IntakeWheels.off();
   }
 
   // Called once the command ends or is interrupted.

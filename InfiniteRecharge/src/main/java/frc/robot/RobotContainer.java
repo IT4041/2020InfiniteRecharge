@@ -7,9 +7,13 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -23,19 +27,19 @@ import frc.robot.subsystems.components.*;
  */
 public class RobotContainer {
 
-  // The robot's subsystems and commands are defined here...
-  private final Elevator elevator = new Elevator();
-  private final ElevatorArm elevatorArm = new ElevatorArm();
-  private final Indexer indexer = new Indexer();
-  private final IntakeElbow intakeElbow = new IntakeElbow();
-  private final IntakeWheels intakeWheels = new IntakeWheels();
-  private final Shooter shooter = new Shooter();
-  private final Turret turret = new Turret();
-
+  //The robot's subsystems and commands are defined here...
   //components
   private final Camera camera = new Camera();
   private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
+
+  private final Elevator elevator = new Elevator();
+  private final ElevatorArm elevatorArm = new ElevatorArm();
+  private final Indexer indexer = new Indexer(rangeSensors);
+  private final IntakeElbow intakeElbow = new IntakeElbow();
+  private final IntakeWheels intakeWheels = new IntakeWheels();
+  private final Turret turret = new Turret();
+  private final Shooter shooter = new Shooter(turret, indexer);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -56,12 +60,19 @@ public class RobotContainer {
     JoystickButton buttonA_dr = new JoystickButton(driver,RobotMap.buttonA);
     JoystickButton buttonY_dr = new JoystickButton(driver,RobotMap.buttonY);
     JoystickButton buttonX_dr = new JoystickButton(driver,RobotMap.buttonX);
+    JoystickButton buttonB_dr = new JoystickButton(driver,RobotMap.buttonB);
 
-    buttonA_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new TurretTest(turret));
-    buttonY_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new TurretTestBack(turret));
+    //JoystickButton buttonBumperLeft = new JoystickButton(driver,RobotMap.buttonBumperLeft);
+    JoystickButton buttonBumperRight = new JoystickButton(driver,RobotMap.buttonBumperRight);
 
-    buttonX_dr.whenHeld((edu.wpi.first.wpilibj2.command.Command)new TurretStartTargeting(turret));
-    buttonX_dr.whenReleased((edu.wpi.first.wpilibj2.command.Command)new TurretEndTargeting(turret));
+    buttonBumperRight.whenPressed((edu.wpi.first.wpilibj2.command.Command)new TurretStartTargeting(turret,shooter));
+    buttonBumperRight.whenReleased((edu.wpi.first.wpilibj2.command.Command)new TurretEndTargeting(turret,shooter));
+
+    buttonX_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOn(intakeWheels));
+    buttonB_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOff(intakeWheels));
+
+    buttonA_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeDown(intakeElbow));
+    buttonY_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeHome(intakeElbow));
 
   }
 

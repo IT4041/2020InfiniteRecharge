@@ -15,12 +15,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class ElevatorArm extends SubsystemBase {
 
-  private static final TalonSRX talon = new TalonSRX(RobotMap.ElevatorArmTalon); 
+  // private static final TalonSRX talon = new TalonSRX(RobotMap.ElevatorArmTalon); 
   /**
    * Creates a new ElevatorArm.
    */
   public ElevatorArm() {
-    talon.configFactoryDefault();
+    // talon.configFactoryDefault();
   }
 
   @Override
