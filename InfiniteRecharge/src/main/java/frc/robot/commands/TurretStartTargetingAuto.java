@@ -10,17 +10,24 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Indexer;
 
-public class TurretStartTargeting extends CommandBase {
+public class TurretStartTargetingAuto extends CommandBase {
 
   private final Turret m_Turret;
   private final Shooter m_shooter;
+  private final Indexer m_Indexer;
   private boolean done = false;
+  private int ballCount = 1;
+  private boolean frontOfBall = false;
+  private boolean backOfBall = false;
+  private int delay = 0;
 
-  public TurretStartTargeting(Turret in_turret, Shooter in_shooter) {
+  public TurretStartTargetingAuto(Turret in_turret, Shooter in_shooter,Indexer in_Indexer) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_Turret = in_turret;
     m_shooter = in_shooter;
+    m_Indexer = in_Indexer;
     addRequirements(m_Turret);
     addRequirements(m_shooter);
   }
@@ -31,11 +38,33 @@ public class TurretStartTargeting extends CommandBase {
 
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  // Called every time the schedMuler runs while the command is scheduled.
   @Override
   public void execute() {
     m_Turret.startTargeting();
     m_shooter.startShooting();
+
+    if(m_Indexer.m_sensors.iSeeABall()){
+      frontOfBall = true;
+    }
+    else{
+      if(frontOfBall){
+        backOfBall = true;
+      }
+    }
+
+    if(backOfBall && frontOfBall){
+      ballCount++;
+      frontOfBall = false;
+      backOfBall = false;
+    }
+
+    if(ballCount > 2){
+      if(delay > 150){
+        done = true;
+      }
+      delay++;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +75,6 @@ public class TurretStartTargeting extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return done;
   }
 }

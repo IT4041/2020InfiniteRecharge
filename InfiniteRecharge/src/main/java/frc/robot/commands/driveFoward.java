@@ -8,34 +8,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.DriveTrain;
 
-public class TurretStartTargeting extends CommandBase {
+public class driveFoward extends CommandBase {
+  /**
+   * Creates a new driveFoward.
+   */
 
-  private final Turret m_Turret;
-  private final Shooter m_shooter;
+  private final DriveTrain m_Drive;
   private boolean done = false;
 
-  public TurretStartTargeting(Turret in_turret, Shooter in_shooter) {
+  public driveFoward(DriveTrain in_drive) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Turret = in_turret;
-    m_shooter = in_shooter;
-    addRequirements(m_Turret);
-    addRequirements(m_shooter);
+    m_Drive = in_drive;
+    addRequirements(m_Drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Turret.startTargeting();
-    m_shooter.startShooting();
+    done = m_Drive.driveFoward();
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +43,6 @@ public class TurretStartTargeting extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return done;
   }
 }

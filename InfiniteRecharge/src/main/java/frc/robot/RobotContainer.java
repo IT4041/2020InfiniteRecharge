@@ -7,13 +7,9 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -33,13 +29,15 @@ public class RobotContainer {
   private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
 
+  public final DriveTrain driveTrain = new DriveTrain();
   private final Elevator elevator = new Elevator();
   private final ElevatorArm elevatorArm = new ElevatorArm();
-  private final Indexer indexer = new Indexer(rangeSensors);
+  public final Indexer indexer = new Indexer(rangeSensors);
   private final IntakeElbow intakeElbow = new IntakeElbow();
   private final IntakeWheels intakeWheels = new IntakeWheels();
   private final Turret turret = new Turret();
   private final Shooter shooter = new Shooter(turret, indexer);
+
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -85,6 +83,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     // return m_autoCommand;
-    return null;
+    return new WeekZeroAuto(turret, shooter, driveTrain, indexer);
   }
 }

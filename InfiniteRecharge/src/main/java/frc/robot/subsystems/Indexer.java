@@ -19,11 +19,12 @@ import frc.robot.subsystems.components.RangeSensors;
 public class Indexer extends SubsystemBase {
 
   private int ballCount = 0;
-  private RangeSensors m_sensors;
+  public RangeSensors m_sensors;
   private boolean frontOfBall = false;
   private boolean backOfBall = false;
   private boolean shooting = false;
   private boolean backedOff = false;
+  private boolean m_inAutonomous = false;
 
   private static final TalonSRX talon = new TalonSRX(RobotMap.IndexerTalon);
   /**
@@ -43,34 +44,41 @@ public class Indexer extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    if(!shooting){
-      if(ballCount < 2){
+    if(!m_inAutonomous){
+      if(!shooting){
+        if(ballCount < 2){
 
-        if(m_sensors.iSeeABall()){
-          talon.set(ControlMode.PercentOutput, -0.85);
-          frontOfBall = true;
-        }
-        else{
-          talon.set(ControlMode.PercentOutput, 0.0);
-          if(frontOfBall){
-            backOfBall = true;
+          if(m_sensors.iSeeABall()){
+            talon.set(ControlMode.PercentOutput, -0.85);
+            frontOfBall = true;
           }
-        }
+          else{
+            talon.set(ControlMode.PercentOutput, 0.0);
+            if(frontOfBall){
+              backOfBall = true;
+            }
+          }
 
-        if(backOfBall && frontOfBall){
-          addBall();
-          frontOfBall = false;
-          backOfBall = false;
+          if(backOfBall && frontOfBall){
+            addBall();
+            frontOfBall = false;
+            backOfBall = false;
+          }
+        }else if (ballCount == 2 && !backedOff){
+          backOff();
         }
-      }else if (ballCount == 2 && !backedOff){
-        backOff();
       }
     }
 
+    SmartDashboard.putBoolean("m_inAutonomous", m_inAutonomous);
     SmartDashboard.putBoolean("fb", frontOfBall);
     SmartDashboard.putBoolean("bb", backOfBall);
     SmartDashboard.putNumber("ballCount", ballCount);
 
+  }
+
+  public void setInAutonomous(boolean in_Autonomous){
+    m_inAutonomous = in_Autonomous;
   }
 
   private void addBall(){
@@ -91,7 +99,6 @@ public class Indexer extends SubsystemBase {
 
   private void On(){
     talon.set(ControlMode.PercentOutput, -0.85);
-    
   }
 
   public void shooting(){

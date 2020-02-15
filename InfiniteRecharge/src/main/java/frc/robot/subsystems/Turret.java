@@ -59,7 +59,7 @@ public class Turret extends PIDSubsystem {
       current = current + Update_Limelight_Tracking();
       SmartDashboard.putNumber("Turret setpoint", current);
       this.setSetpoint(current);
-      Timer.delay(0.001);
+      Timer.delay(0.0005);
       current = this.getMeasurement();
     }
     else{
@@ -67,7 +67,7 @@ public class Turret extends PIDSubsystem {
     }
 
     double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-    onTarget = super.m_controller.atSetpoint() && ta > 1;
+    onTarget = super.m_controller.atSetpoint() && ta > 0.5;
 
   }
 
@@ -92,8 +92,6 @@ public class Turret extends PIDSubsystem {
   public void startTargeting(){
     this.aquireTarget = true;
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
-    
-
   }
 
   public void endTargeting(){
@@ -127,11 +125,18 @@ public class Turret extends PIDSubsystem {
 
   public double distanceToTarget(){
 
-    //dist=k/Math.sqrt(area); 
-    double k = 166.13; //14.925;
-    double area = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+    double o = 2.875; // ta value at 120 inches 
+    double k = 203.4; // k = 120*Math.sqrt(ta)
+    double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
 
-    return  Math.round(k/ Math.sqrt(area));//inches
+    double delta = o - ta;
+    delta = Math.cbrt(delta);
+    delta = delta/12;
+    delta = ta - delta;
+    delta = Math.sqrt(delta);
+    delta = k/delta;
+
+    return  Math.round(delta);
   }
 
 }

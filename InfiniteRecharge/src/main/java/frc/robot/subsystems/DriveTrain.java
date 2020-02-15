@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
@@ -37,22 +38,7 @@ public class DriveTrain extends SubsystemBase {
    //declares the drive train (which consists of each motor controller)
    public final DifferentialDrive robotDrive = new DifferentialDrive(leftSCG, rightSCG);
 
-
-   private static DriveTrain instance;
-
-   private DriveTrain(){
-    init();
-  }
-
-   public static DriveTrain getInstance(){
-     if (instance == null){
-       instance = new DriveTrain();
-     }
-
-     return instance;
-   }
-
-   private void init(){
+   public DriveTrain(){
      
     frontRightTalon.setNeutralMode(NeutralMode.Coast);
     frontLeftTalon.setNeutralMode(NeutralMode.Coast);
@@ -77,5 +63,11 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("drivetrain turn", turn);
   }
 
+  public boolean driveFoward(){
+    robotDrive.arcadeDrive(.4, 0.0, true);
+    Timer.delay(1.5);
+    robotDrive.arcadeDrive(0.0, 0.0, true);
+    return true;
+  }
 
 }

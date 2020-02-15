@@ -13,6 +13,8 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.Turret;
@@ -27,13 +29,9 @@ public class Shooter extends SubsystemBase {
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, minRPM;
   private Turret m_Turret;
   private Indexer m_Indexer;
-
-  //values for rpm calculation
-  private double multiplier = 26.5; //rpm multiplier
-
-  private double compensator = 1.15;
   private double velocity = 0.0;
-  private double rpm_tolerance = 45.0;
+  private double rpm_tolerance = 25.0;
+  private int accumulator = 0;
 
   /**
    * Creates a new Shooter.
@@ -62,7 +60,7 @@ public class Shooter extends SubsystemBase {
     kMaxOutput = 1; 
     kMinOutput = -1;
     maxRPM = 6550;
-    minRPM = 3300;
+    minRPM = 4150;
 
     // set PID coefficients
     pidController.setP(kP);
@@ -93,41 +91,41 @@ public class Shooter extends SubsystemBase {
       SmartDashboard.putNumber("shooter Desired velocity", velocity );
       SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
       
-      if(atRPM()){
+      if(atRPM() && accumulator > 100){
         m_Indexer.shooting();
       }
+    }else{
+      accumulator = 0;
+      m_Indexer.endShooting();
     }
 
-    SmartDashboard.putBoolean("shooter at rpm", atRPM());
+    SmartDashboard.putBoolean("shooter at rpm", atRPM() && accumulator > 100);
   }
 
   private double calculateRPMs(){
 
     double finalRPMS;
     double distance = m_Turret.distanceToTarget();
-    double calcRPMs = distance * multiplier * compensator;
+    double origin = 4150;
 
-    finalRPMS = (calcRPMs < maxRPM ? calcRPMs : maxRPM);
-    finalRPMS = (calcRPMs < minRPM ? minRPM : calcRPMs);
+    //calculate rpms
+    finalRPMS =  origin + (((distance - 120) / 12)*70);
 
-    SmartDashboard.putNumber("shooter compensated rpms", finalRPMS);
-    SmartDashboard.putNumber("shooter expected rpms",  finalRPMS * 0.85);
-    SmartDashboard.putNumber("shooter distance", distance);
+    //use min rpms if calculated value is below min threshold
+    finalRPMS = (finalRPMS < minRPM) ? minRPM : finalRPMS;
 
     return finalRPMS;
   }
 
   private boolean atRPM(){
 
-    double convertBack = 1.1764705885;
-
     boolean atSpeed = false;
     double measuredVelo = encoder.getVelocity();
-    double compMeasured = measuredVelo * compensator;
-    compMeasured = (measuredVelo * compensator < minRPM ? minRPM * 0.85 : (measuredVelo * compensator));
+    double compensatedVelo = velocity * 0.87;
 
-    if( compMeasured < (velocity + rpm_tolerance) && compMeasured > (velocity - rpm_tolerance)){
+    if(measuredVelo < (compensatedVelo + rpm_tolerance) && measuredVelo > (compensatedVelo - rpm_tolerance) && measuredVelo > 3000){
       atSpeed = true;
+      accumulator++;
     }
     return atSpeed;
   }
