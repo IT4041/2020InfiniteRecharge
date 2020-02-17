@@ -5,10 +5,11 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.groups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
+import frc.robot.commands.auto.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -18,9 +19,9 @@ public class WeekZeroAuto extends SequentialCommandGroup {
    * Creates a new WeekZeroAuto.
    */
   
-  public WeekZeroAuto(Turret in_turret, Shooter in_shooter, DriveTrain in_drive, Indexer in_Indexer) {
+  public WeekZeroAuto(Bombardier in_Bombardier, DriveTrain in_drive) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand())
-    super(new TurretStartTargetingAuto(in_turret, in_shooter, in_Indexer), new TurretEndTargeting(in_turret, in_shooter), new driveFoward(in_drive));
+    super(new ShootPreloaded(in_Bombardier), new DriveFoward(in_drive));
   }
 }

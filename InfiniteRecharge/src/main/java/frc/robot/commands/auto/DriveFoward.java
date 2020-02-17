@@ -5,22 +5,23 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.DriveTrain;
 
-public class LiftBallsStop extends CommandBase {
-
-  private final Indexer m_Indexer;
-
+public class DriveFoward extends CommandBase {
   /**
-   * Creates a new LiftBallsStop.
+   * Creates a new driveFoward.
    */
-  public LiftBallsStop(Indexer in_Indexer) {
-    m_Indexer = in_Indexer;
-    addRequirements(m_Indexer);
+
+  private final DriveTrain m_Drive;
+  private boolean done = false;
+
+  public DriveFoward(DriveTrain in_drive) {
     // Use addRequirements() here to declare subsystem dependencies.
+    m_Drive = in_drive;
+    addRequirements(m_Drive);
   }
 
   // Called when the command is initially scheduled.
@@ -31,8 +32,7 @@ public class LiftBallsStop extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Indexer.Off();
-
+    done = m_Drive.driveFoward();
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +43,6 @@ public class LiftBallsStop extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return done;
   }
 }

@@ -8,13 +8,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.networktables.*;
 import frc.robot.RobotMap;
 
 public class Turret extends PIDSubsystem {
@@ -22,14 +20,15 @@ public class Turret extends PIDSubsystem {
   private final TalonSRX talon = new TalonSRX(RobotMap.TurretTalon); 
   private final Encoder encoder = new Encoder(RobotMap.TurretChannelA, RobotMap.TurretChannelB, true, Encoder.EncodingType.k4X);
 
+  // value that store the current position of turret
   private double current = 0;
   private boolean aquireTarget = false;
-  private boolean onTarget = false;
 
   private final double gr = 208/36; // gear ration 208/36
   private final double ppmr = 44.4; //pulses per motor revolution
   private final double pptr = gr * ppmr; // pulses per turret revolution
   private final double dptp = 360/pptr; // degrees per turret pulse
+  private double m_xOffset = 0.0;
 
   public Turret() {
     super(
@@ -37,9 +36,13 @@ public class Turret extends PIDSubsystem {
         new PIDController(0.0425, 0, 0.0003)
     );
 
+    // turn on pid controller
     this.enable();
     talon.configFactoryDefault();
     encoder.reset();
+
+    // set the tolerance of pid controller to allow turret to be slightly off target
+    // 2 degrees in either direction
     super.m_controller.setTolerance(2);
     
   }
@@ -47,100 +50,74 @@ public class Turret extends PIDSubsystem {
   @Override
   public void periodic() {
 
+    //Make sure the super's pid is running
     super.periodic(); 
-    SmartDashboard.putNumber("Turret distance", distanceToTarget());
-    SmartDashboard.putBoolean("atSetpoint", super.m_controller.atSetpoint());
-    SmartDashboard.putNumber("Turret setpoint", current);
-    SmartDashboard.putBoolean("Turret PID", this.isEnabled());
-    SmartDashboard.putBoolean("Turret Running periodic", true);
 
-    if(aquireTarget){
-      
-      current = current + Update_Limelight_Tracking();
+    if(aquireTarget){//Bombardier notified turrent to target
+      // TrackTarget returns the offset to the target in degrees
+      // if limelight has a valid target, if no valid target is found
+      // TrackTarget returns no offset(0.0)
+      // 1.)add the offset to current position
+      current = current + trackTarget();
+      // 2.) update pid setpoint to new position
       this.setSetpoint(current);
+      // 3.) delay thread so adjustment can happen
       Timer.delay(0.0005);
+      // 4.) update current positoin to position after adjustment and delay
       current = this.getMeasurement();
-
-      double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-      onTarget = super.m_controller.atSetpoint() && ta > 0.5;
-
-      SmartDashboard.putBoolean("Turret Aquire Target", true);
-      SmartDashboard.putNumber("Turret setpoint", current);
     }
-    else{
-      SmartDashboard.putBoolean("Turret Aquire Target", false);
-    }
-
-
-
   }
 
-  // PID functions *****************************************
+  // PID functions *******************************************************************
   @Override
   public void useOutput(double output, double setpoint) {
     // Use the output here
     talon.set(ControlMode.PercentOutput, output);
-    SmartDashboard.putNumber("Turret PID Ouput", output);
   }
 
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
     int  value = encoder.get();
-    SmartDashboard.putNumber("Turret PID process variable", value);
     return value;
   }
-  //end PID *******************************
+  //end PID ************************************************************************
 
-  // OI function **************************
-  public void startTargeting(){
+  // OI function *******************************************************************
+  public void targetingEnabled(double in_XOffset){
+    //Turret will auto-aim towards target
     this.aquireTarget = true;
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(3);
+    //get x offset from limelight
+    m_xOffset = in_XOffset;
   }
 
-  public void endTargeting(){
+  public void targetingDisabled(){
+    //Turret will stop auto-aiming towards target
+    // and return to center back position
     this.aquireTarget = false;
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    
+    //reset x offset
+    m_xOffset = 0.0;
+
+    //recenter turret on back of robot
     current = 0;
     this.setSetpoint(current);
   }
-  // end OI functions ***************************
+  // end OI functions *******************************************************************
 
-  private double Update_Limelight_Tracking()
+
+  // vision functions *******************************************************************
+  private double trackTarget()
   {
-        double steer_cmd = 0.0;
-
-        double tv = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getDouble(0);
-        double tx = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
-
-        if (tv < 1.0){
-          steer_cmd = 0.0;
-        }else{
-          // Start with proportional turning
-          steer_cmd = tx * dptp;
-        }
-        SmartDashboard.putNumber("Turret Change", steer_cmd);
-        return steer_cmd;
+    // TrackTarget returns the offset to the target in turret pulses (+/-)  
+    return m_xOffset * dptp;
   }
 
-  public boolean OnTarget(){
-    return onTarget;
+  public boolean onTarget(){
+    // is the pid report that on the setpoint within the tolerance
+    return super.m_controller.atSetpoint();
   }
 
-  public double distanceToTarget(){
-
-    double o = 2.875; // ta value at 120 inches 
-    double k = 203.4; // k = 120*Math.sqrt(ta)
-    double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-
-    double delta = o - ta;
-    delta = Math.cbrt(delta);
-    delta = delta/12;
-    delta = ta - delta;
-    delta = Math.sqrt(delta);
-    delta = k/delta;
-
-    return  Math.round(delta);
-  }
+  // end vision functions *******************************************************************
 
 }

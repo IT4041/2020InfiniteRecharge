@@ -12,9 +12,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Joystick;
 import frc.robot.RobotMap;
 
 public class DriveTrain extends SubsystemBase {
@@ -53,7 +53,7 @@ public class DriveTrain extends SubsystemBase {
     
    }
 
-   public void arcade(Joystick driver){
+   public void arcade(XboxController driver){
 
     double speed = -driver.getRawAxis(RobotMap.leftStickY);
     double turn = driver.getRawAxis(RobotMap.rightStickX);

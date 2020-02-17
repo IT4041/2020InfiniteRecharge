@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.*;
+import frc.robot.commands.groups.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.components.*;
 
@@ -28,15 +29,20 @@ public class RobotContainer {
   private final Camera camera = new Camera();
   private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
+  private final LimeLight limeLight = new LimeLight();
 
   public final DriveTrain driveTrain = new DriveTrain();
   private final Elevator elevator = new Elevator();
   private final ElevatorArm elevatorArm = new ElevatorArm();
-  public final Indexer indexer = new Indexer(rangeSensors);
+  private final Indexer indexer = new Indexer(rangeSensors);
   private final IntakeElbow intakeElbow = new IntakeElbow();
   private final IntakeWheels intakeWheels = new IntakeWheels();
   private final Turret turret = new Turret();
-  private final Shooter shooter = new Shooter(turret, indexer);
+  private final Shooter shooter = new Shooter();
+  private final Bombardier bombardier = new Bombardier(indexer, turret, shooter, limeLight);
+
+  public final XboxController driver = new XboxController(RobotMap.xboxControllerDriver);
+  private final XboxController assist = new XboxController(RobotMap.xboxControllerAssist);
 
 
   /**
@@ -54,32 +60,24 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    XboxController driver = new XboxController(0);
-    XboxController assist = new XboxController(1);
-    JoystickButton buttonA_dr = new JoystickButton(assist,RobotMap.buttonA);
-    JoystickButton buttonY_dr = new JoystickButton(assist,RobotMap.buttonY);
-    JoystickButton buttonX_dr = new JoystickButton(assist,RobotMap.buttonX);
-    JoystickButton buttonB_dr = new JoystickButton(assist,RobotMap.buttonB);
 
-    JoystickButton buttonA_as = new JoystickButton(driver,RobotMap.buttonA);
+    JoystickButton buttonBumperRight_dr = new JoystickButton(driver,RobotMap.buttonBumperRight);
 
-    //JoystickButton buttonBumperLeft = new JoystickButton(driver,RobotMap.buttonBumperLeft);
-    JoystickButton buttonBumperRight = new JoystickButton(driver,RobotMap.buttonBumperRight);
+    buttonBumperRight_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new TurretStartTargeting(bombardier));
+    buttonBumperRight_dr.whenReleased((edu.wpi.first.wpilibj2.command.Command)new TurretEndTargeting(bombardier));
 
-    buttonBumperRight.whenPressed((edu.wpi.first.wpilibj2.command.Command)new TurretStartTargeting(turret,shooter));
-    buttonBumperRight.whenReleased((edu.wpi.first.wpilibj2.command.Command)new TurretEndTargeting(turret,shooter));
+    JoystickButton buttonA_as = new JoystickButton(assist,RobotMap.buttonA);
+    JoystickButton buttonY_as = new JoystickButton(assist,RobotMap.buttonY);
+    JoystickButton buttonX_as = new JoystickButton(assist,RobotMap.buttonX);
+    JoystickButton buttonB_as = new JoystickButton(assist,RobotMap.buttonB);
 
-    buttonX_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOn(intakeWheels));
-    buttonB_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOff(intakeWheels));
+    buttonX_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOn(intakeWheels));
+    buttonB_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOff(intakeWheels));
 
-    buttonA_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeDown(intakeElbow));
-    buttonY_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeHome(intakeElbow));
-
-    buttonA_as.whenReleased((edu.wpi.first.wpilibj2.command.Command)new LiftBallsStop(indexer));
-    buttonA_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new LiftBalls(indexer));
+    buttonA_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeDown(intakeElbow));
+    buttonY_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeHome(intakeElbow));
 
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -89,6 +87,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     // return m_autoCommand;
-    return new WeekZeroAuto(turret, shooter, driveTrain, indexer);
+    return new WeekZeroAuto(bombardier, driveTrain);
+  }
+
+  public void disabledLEDS(){
+    limeLight.ledOff();
   }
 }

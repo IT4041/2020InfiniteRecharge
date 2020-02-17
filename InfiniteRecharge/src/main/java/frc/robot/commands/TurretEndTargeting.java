@@ -8,37 +8,34 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Bombardier;
 
 public class TurretEndTargeting extends CommandBase {
 
-  private final Turret m_Turret;
-  private final Shooter m_shooter;
+  private final Bombardier m_Bombardier;
 
-  public TurretEndTargeting(Turret in_turret, Shooter in_shooter) {
+  public TurretEndTargeting(Bombardier in_Bombardier) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Turret = in_turret;
-    m_shooter = in_shooter;
-    addRequirements(m_Turret);
-    addRequirements(m_shooter);
+    m_Bombardier = in_Bombardier;
+    addRequirements(m_Bombardier);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Turret.endTargeting();
-    m_shooter.endShooting();
+    m_Bombardier.target(false, true);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_Bombardier.target(false, true);
   }
 
   // Returns true when the command should end.

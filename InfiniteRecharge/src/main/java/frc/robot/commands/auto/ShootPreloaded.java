@@ -5,41 +5,49 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Bombardier;
 
-public class driveFoward extends CommandBase {
-  /**
-   * Creates a new driveFoward.
-   */
+public class ShootPreloaded extends CommandBase {
 
-  private final DriveTrain m_Drive;
+  private final Bombardier m_Bombardier;
   private boolean done = false;
+  private int ballCount = 1;
 
-  public driveFoward(DriveTrain in_drive) {
+
+  public ShootPreloaded(Bombardier in_Bombardier) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Drive = in_drive;
-    addRequirements(m_Drive);
+    m_Bombardier = in_Bombardier;
+    addRequirements(m_Bombardier);
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    m_Bombardier.setIndexerBallCount(ballCount);
+ 
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
+  // Called every time the schedMuler runs while the command is scheduled.
   @Override
   public void execute() {
-    done = m_Drive.driveFoward();
+    m_Bombardier.target(true, false);
+    m_Bombardier.setIndexerCountOnly(true);
+    done = m_Bombardier.getIndexerBallCount() > 2;
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_Bombardier.target(false,true);
+    m_Bombardier.setIndexerCountOnly(false);
+    m_Bombardier.resetIndexer();
   }
-
+  
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {

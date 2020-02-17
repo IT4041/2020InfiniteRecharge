@@ -11,9 +11,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.OI;
 import frc.robot.commands.ArcadeDrive;
-import edu.wpi.first.networktables.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -25,7 +23,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   public RobotContainer m_robotContainer;
-  private OI m_oi;
   private ArcadeDrive m_arcadeDrive;
   
 
@@ -38,8 +35,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    m_oi = new OI();
-    m_oi.init();
 
   }
 
@@ -64,12 +59,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    m_robotContainer.disabledLEDS();
   }
 
   @Override
   public void disabledPeriodic() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(1);
+    m_robotContainer.disabledLEDS();
   }
 
   /**
@@ -102,9 +97,8 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    m_arcadeDrive = new ArcadeDrive(m_robotContainer.driveTrain);
+    m_arcadeDrive = new ArcadeDrive(m_robotContainer.driveTrain, m_robotContainer.driver);
     m_arcadeDrive.execute();
-    m_robotContainer.indexer.setInAutonomous(false);
    
   }
 
@@ -113,7 +107,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    m_robotContainer.indexer.setInAutonomous(false);
     m_arcadeDrive.execute();
   }
 

@@ -8,25 +8,27 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.OI;
 
 /**
  * An example command that uses an example subsystem.
  */
 public class ArcadeDrive extends CommandBase {
 
-  private final DriveTrain my_driveTrain;
+  private final DriveTrain m_driveTrain;
+  private final XboxController m_driverController;
 
   /**
    * Creates a new ExampleCommand.
    *
    * @param driveTrain The subsystem used by this command.
    */
-  public ArcadeDrive(DriveTrain driveTrain) {
-    my_driveTrain = driveTrain;
+  public ArcadeDrive(DriveTrain in_driveTrain, XboxController in_driverController) {
+    m_driveTrain = in_driveTrain;
+    m_driverController = in_driverController;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveTrain);
+    addRequirements(m_driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -37,7 +39,7 @@ public class ArcadeDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    my_driveTrain.arcade(OI.XboxDriver);
+    m_driveTrain.arcade(m_driverController);
   }
 
   // Called once the command ends or is interrupted.

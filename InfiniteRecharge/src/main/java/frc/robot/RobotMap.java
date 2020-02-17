@@ -7,49 +7,49 @@ public class RobotMap {
     //This is where we store all locations of buttons and subsystems
 
     //DriveTrain
-    public static final int FrontRightTalon = 20;
-	public static final int FrontLeftTalon = 23;
-	public static final int BackRightTalon = 22;
-	public static final int BackLeftTalon = 21;
-	public static final int TopRightTalon = 24;
-	public static final int TopLeftTalon = 25;
+    public static final int FrontRightTalon = 20; //PDP:13
+	public static final int FrontLeftTalon = 23; //PDP:1
+	public static final int BackRightTalon = 22; //PDP:14
+	public static final int BackLeftTalon = 21; //PDP:13
+	public static final int TopRightTalon = 24; //PDP:3
+	public static final int TopLeftTalon = 25; //PDP:2
     //end DriveTrain
 
 	//Turret
-	public static final int TurretTalon = 6;
+	public static final int TurretTalon = 6; //PDP:8
 	public static final int TurretChannelA = 0;
 	public static final int TurretChannelB = 1;
 	//end Turret
 
 	//Shooter
-	public static final int ShooterSparkMax1 = 31;
-	public static final int ShooterSparkMax2 = 32;
+	public static final int ShooterSparkMax1 = 31; //PDP:15
+	public static final int ShooterSparkMax2 = 32; //PDP:0
 	//end Shooter
 
 	//Intake Elbow
-	public static final int IntakeElbowSparkMax = 30;
+	public static final int IntakeElbowSparkMax = 30; //PDP:9
 	//end Intake Elbow
 
 	//Intake Wheels
-	public static final int IntakeWheelsTalon = 7;
+	public static final int IntakeWheelsTalon = 7; //PDP:11
 	//end Intake Wheels
 
 	//Ranger Sensor
-	public static final int TimeOfFlight1 = 1;
-	public static final int TimeOfFlight2 = 2;
+	public static final int TimeOfFlightInternal = 1;
+	public static final int TimeOfFlightExternal = 2;
 	//end Ranger Sensor
 
 	//Indexer
-	public static final int IndexerTalon = 2;
+	public static final int IndexerTalon = 2; //PDP:7
 	//end Indexer
 
 	//Elevator Arm
-	public static final int ElevatorArmTalon = 5;
+	public static final int ElevatorArmTalon = 5; //PDP:??
 	//end Elevator Arm
 
 	//Elevator
-	public static final int ElevatorTalon1 = 1;
-	public static final int ElevatorTalon2 = 3;
+	public static final int ElevatorTalon1 = 1; //PDP:??
+	public static final int ElevatorTalon2 = 3; //PDP:??
 	//end Elevator
 	
     //start xbox *****************************************

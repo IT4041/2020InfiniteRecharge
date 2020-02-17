@@ -13,51 +13,34 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Indexer;
 
 public class Shooter extends SubsystemBase {
   
-  private CANSparkMax sparkMax1;
-  private CANSparkMax sparkMax2;
-  private CANPIDController pidController;
-  private CANEncoder encoder;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, minRPM;
-  private Turret m_Turret;
-  private Indexer m_Indexer;
-  private double velocity = 0.0;
-  private double rpm_tolerance = 25.0;
+  private final CANSparkMax sparkMax1 = new CANSparkMax(RobotMap.ShooterSparkMax1, MotorType.kBrushless);
+  private final CANSparkMax sparkMax2 = new CANSparkMax(RobotMap.ShooterSparkMax2, MotorType.kBrushless);
+  private final CANPIDController pidController = sparkMax1.getPIDController();
+  private final CANEncoder encoder = sparkMax1.getEncoder();
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, minRPM;
   private int accumulator = 0;
-  private boolean hasShot = false;
+  private double velocity = 0.0;
 
   /**
-   * Creates a new Shooter.
+   * Creates a new Shooter. This subsystem controls the shooter head
    */
-  public Shooter(Turret in_Turret, Indexer in_Indexer) {
-    m_Turret = in_Turret;
-    m_Indexer = in_Indexer;
-
-    sparkMax1 = new CANSparkMax(RobotMap.ShooterSparkMax1, MotorType.kBrushless);//31
-    sparkMax2 = new CANSparkMax(RobotMap.ShooterSparkMax2, MotorType.kBrushless);
+  public Shooter() {
 
     sparkMax1.restoreFactoryDefaults();
     sparkMax2.restoreFactoryDefaults();
 
     sparkMax2.follow(sparkMax1, true);
 
-    pidController = sparkMax1.getPIDController();
-    encoder = sparkMax1.getEncoder();
-
     // PID coefficients
     kP = 0.001; 
     kI = 0;
     kD = 0.00002; 
     kIz = 0; 
-    kFF = 0.00002; 
+    kFF = 0.00002; //kFF = 0.0001754385964912281; possible value for voltage pid
     kMaxOutput = 1; 
     kMinOutput = -1;
     maxRPM = 6550;
@@ -71,47 +54,24 @@ public class Shooter extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    SmartDashboard.putBoolean("shooter at rpm", false);
-    SmartDashboard.putNumber("shooter Desired velocity", 0);
-    SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
-    SmartDashboard.putNumber("shooter distance", 0);
-    SmartDashboard.putNumber("shooter compensated rpms",  0);
-    SmartDashboard.putNumber("shooter expected rpms",  0);
-
   }
 
   @Override
   public void periodic() {
-
-    // velocity is 115% of actual  
-    if(m_Turret.OnTarget()){
-      velocity = calculateRPMs();
-      pidController.setReference(velocity, ControlType.kVelocity);
-      SmartDashboard.putNumber("shooter Desired velocity", velocity );
-      SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
-      
-      if(atRPM() && accumulator > 100){
-        m_Indexer.shooting();
-        hasShot = true;
-      }
-    }else{
-      accumulator = 0;
-      if(hasShot){
-        m_Indexer.endShooting();
-        hasShot = false;
-      }
-    }
-
-    SmartDashboard.putBoolean("shooter at rpm", atRPM() && accumulator > 100);
   }
 
-  private double calculateRPMs(){
+  // todo: change pid to voltage
+  //"I’ve generally found that good tuning of a velocity PID starts with feed-forward
+  //- as mentioned, set it to (max motor command)/(max output speed), and play with it 
+  //to see how close you can get to your setpoint without any feedback. After that, 
+  //bring in the rest of the PID to help reject disturbances and 
+  //get you even closer to the setpoint." gerthworm
+  private double calculateRPMs(double distance){
 
     double finalRPMS;
-    double distance = m_Turret.distanceToTarget();
     double origin = 4150;
 
-    //calculate rpms
+    //calculate rpms 
     finalRPMS =  origin + (((distance - 120) / 12)*70);
 
     //use min rpms if calculated value is below min threshold
@@ -120,20 +80,19 @@ public class Shooter extends SubsystemBase {
     return finalRPMS;
   }
 
-  private boolean atRPM(){
-
+  public boolean readyToShoot(){
     boolean atSpeed = false;
     double measuredVelo = encoder.getVelocity();
     double compensatedVelo = velocity * 0.87;
 
-    if(measuredVelo < (compensatedVelo + rpm_tolerance) && measuredVelo > (compensatedVelo - rpm_tolerance) && measuredVelo > 3000){
+    if(measuredVelo < (compensatedVelo + 25) && measuredVelo > (compensatedVelo - 25) && measuredVelo > 3000){
       atSpeed = true;
       accumulator++;
     }
-    return atSpeed;
+    return atSpeed && accumulator > 50;
   }
 
-  public void endShooting(){
+  private void disablePID(){
     velocity = 0.0;
     pidController.setReference(velocity, ControlType.kVelocity);
     pidController.setP(0.0);
@@ -141,10 +100,9 @@ public class Shooter extends SubsystemBase {
     pidController.setD(0.0);
     pidController.setIZone(0.0);
     pidController.setFF(0.0);
-    m_Indexer.endShooting();
   }
 
-  public void startShooting(){
+  private void enablePID(){
     pidController.setP(kP);
     pidController.setI(kI);
     pidController.setD(kD);
@@ -152,4 +110,14 @@ public class Shooter extends SubsystemBase {
     pidController.setFF(kFF);
   }
 
+  public void on(double distance){
+    this.enablePID();
+    velocity = this.calculateRPMs(distance);
+    pidController.setReference(velocity, ControlType.kVelocity);
+  }
+  
+  public void off(){
+    this.disablePID();
+    accumulator = 0;
+  }
 }
