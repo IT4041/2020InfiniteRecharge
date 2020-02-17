@@ -34,10 +34,11 @@ public class Indexer extends SubsystemBase {
     talon.configFactoryDefault();
     talon.configFactoryDefault();
     talon.configContinuousCurrentLimit(18);
-    talon.configPeakCurrentLimit(40);
-    talon.configPeakCurrentDuration(1000);
+    talon.configPeakCurrentLimit(30);
+    talon.configPeakCurrentDuration(200);
     talon.enableCurrentLimit(true);
     m_sensors = rangeSensors;
+    SmartDashboard.putBoolean("ON!!!", false);
   }
 
   @Override
@@ -49,7 +50,7 @@ public class Indexer extends SubsystemBase {
         if(ballCount < 2){
 
           if(m_sensors.iSeeABall()){
-            talon.set(ControlMode.PercentOutput, -0.85);
+            talon.set(ControlMode.PercentOutput, 0.85);
             frontOfBall = true;
           }
           else{
@@ -71,9 +72,11 @@ public class Indexer extends SubsystemBase {
     }
 
     SmartDashboard.putBoolean("m_inAutonomous", m_inAutonomous);
+    SmartDashboard.putBoolean("shooting", shooting);
     SmartDashboard.putBoolean("fb", frontOfBall);
     SmartDashboard.putBoolean("bb", backOfBall);
     SmartDashboard.putNumber("ballCount", ballCount);
+    SmartDashboard.putBoolean("backedOff", backedOff);
 
   }
 
@@ -84,33 +87,36 @@ public class Indexer extends SubsystemBase {
   private void addBall(){
     ballCount ++;
   }
-
-  private void emptyTheTank(){
-    //function get called when we shoot
-    ballCount = 0;
-  }
   
   private void backOff(){
-    talon.set(ControlMode.PercentOutput, 0.4);
+    talon.set(ControlMode.PercentOutput, -0.4);
     Timer.delay(0.1);
     talon.set(ControlMode.PercentOutput, 0.0);
     backedOff = true;
   }
 
-  private void On(){
-    talon.set(ControlMode.PercentOutput, -0.85);
+  public void On(){
+    SmartDashboard.putBoolean("ON!!!", true);
+    talon.set(ControlMode.PercentOutput, 0.85);
+    shooting = true;
+  }
+
+  public void Off(){
+    talon.set(ControlMode.PercentOutput, 0.0);
+    SmartDashboard.putBoolean("ON!!!", false);
+    shooting = false;
   }
 
   public void shooting(){
-    emptyTheTank();
     On();
     shooting = true;
-    backedOff = false;
   }
 
   public void endShooting(){
     shooting = false;
+    backedOff = false;
     talon.set(ControlMode.PercentOutput, 0.0);
+    ballCount = 0;
   }
   
 }

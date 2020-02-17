@@ -8,33 +8,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Indexer;
 
-public class TurretStartTargeting extends CommandBase {
+public class LiftBallsStop extends CommandBase {
 
-  private final Turret m_Turret;
-  private final Shooter m_shooter;
+  private final Indexer m_Indexer;
 
-  public TurretStartTargeting(Turret in_turret, Shooter in_shooter) {
+  /**
+   * Creates a new LiftBallsStop.
+   */
+  public LiftBallsStop(Indexer in_Indexer) {
+    m_Indexer = in_Indexer;
+    addRequirements(m_Indexer);
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Turret = in_turret;
-    m_shooter = in_shooter;
-    addRequirements(m_Turret);
-    addRequirements(m_shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_Turret.startTargeting();
-    m_shooter.startShooting();
+    m_Indexer.Off();
+
   }
 
   // Called once the command ends or is interrupted.

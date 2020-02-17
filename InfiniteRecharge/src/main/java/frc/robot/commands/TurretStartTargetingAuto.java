@@ -36,6 +36,7 @@ public class TurretStartTargetingAuto extends CommandBase {
   @Override
   public void initialize() {
 
+    m_Indexer.setInAutonomous(true);
   }
 
   // Called every time the schedMuler runs while the command is scheduled.
@@ -70,6 +71,7 @@ public class TurretStartTargetingAuto extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    m_Indexer.setInAutonomous(false);
   }
 
   // Returns true when the command should end.

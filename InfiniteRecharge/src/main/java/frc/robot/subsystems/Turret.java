@@ -55,19 +55,23 @@ public class Turret extends PIDSubsystem {
     SmartDashboard.putBoolean("Turret Running periodic", true);
 
     if(aquireTarget){
-      SmartDashboard.putBoolean("Turret Aquire Target", true);
+      
       current = current + Update_Limelight_Tracking();
-      SmartDashboard.putNumber("Turret setpoint", current);
       this.setSetpoint(current);
       Timer.delay(0.0005);
       current = this.getMeasurement();
+
+      double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
+      onTarget = super.m_controller.atSetpoint() && ta > 0.5;
+
+      SmartDashboard.putBoolean("Turret Aquire Target", true);
+      SmartDashboard.putNumber("Turret setpoint", current);
     }
     else{
       SmartDashboard.putBoolean("Turret Aquire Target", false);
     }
 
-    double ta = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ta").getDouble(0);
-    onTarget = super.m_controller.atSetpoint() && ta > 0.5;
+
 
   }
 

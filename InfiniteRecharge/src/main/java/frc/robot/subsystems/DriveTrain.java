@@ -65,7 +65,7 @@ public class DriveTrain extends SubsystemBase {
 
   public boolean driveFoward(){
     robotDrive.arcadeDrive(.4, 0.0, true);
-    Timer.delay(1.5);
+    Timer.delay(2);
     robotDrive.arcadeDrive(0.0, 0.0, true);
     return true;
   }

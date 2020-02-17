@@ -32,6 +32,7 @@ public class Shooter extends SubsystemBase {
   private double velocity = 0.0;
   private double rpm_tolerance = 25.0;
   private int accumulator = 0;
+  private boolean hasShot = false;
 
   /**
    * Creates a new Shooter.
@@ -70,8 +71,6 @@ public class Shooter extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
-    // SmartDashboard.putNumber("shooter multiplier", multiplier);
-    // SmartDashboard.putNumber("shooter compensator", compensator);
     SmartDashboard.putBoolean("shooter at rpm", false);
     SmartDashboard.putNumber("shooter Desired velocity", 0);
     SmartDashboard.putNumber("shooter Actual velocity", encoder.getVelocity());
@@ -93,10 +92,14 @@ public class Shooter extends SubsystemBase {
       
       if(atRPM() && accumulator > 100){
         m_Indexer.shooting();
+        hasShot = true;
       }
     }else{
       accumulator = 0;
-      m_Indexer.endShooting();
+      if(hasShot){
+        m_Indexer.endShooting();
+        hasShot = false;
+      }
     }
 
     SmartDashboard.putBoolean("shooter at rpm", atRPM() && accumulator > 100);

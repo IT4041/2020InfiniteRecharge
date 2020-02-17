@@ -22,8 +22,8 @@ public class IntakeWheels extends SubsystemBase {
   public IntakeWheels() {
     talon.configFactoryDefault();
     talon.configContinuousCurrentLimit(18);
-    talon.configPeakCurrentLimit(40);
-    talon.configPeakCurrentDuration(1000);
+    talon.configPeakCurrentLimit(30);
+    talon.configPeakCurrentDuration(200);
     talon.enableCurrentLimit(true);
   }
 
@@ -33,7 +33,7 @@ public class IntakeWheels extends SubsystemBase {
   }
 
   public void on(){
-    talon.set(ControlMode.PercentOutput, -0.65);
+    talon.set(ControlMode.PercentOutput, 0.65);
   }
 
   public void off(){

@@ -55,10 +55,13 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     XboxController driver = new XboxController(0);
-    JoystickButton buttonA_dr = new JoystickButton(driver,RobotMap.buttonA);
-    JoystickButton buttonY_dr = new JoystickButton(driver,RobotMap.buttonY);
-    JoystickButton buttonX_dr = new JoystickButton(driver,RobotMap.buttonX);
-    JoystickButton buttonB_dr = new JoystickButton(driver,RobotMap.buttonB);
+    XboxController assist = new XboxController(1);
+    JoystickButton buttonA_dr = new JoystickButton(assist,RobotMap.buttonA);
+    JoystickButton buttonY_dr = new JoystickButton(assist,RobotMap.buttonY);
+    JoystickButton buttonX_dr = new JoystickButton(assist,RobotMap.buttonX);
+    JoystickButton buttonB_dr = new JoystickButton(assist,RobotMap.buttonB);
+
+    JoystickButton buttonA_as = new JoystickButton(driver,RobotMap.buttonA);
 
     //JoystickButton buttonBumperLeft = new JoystickButton(driver,RobotMap.buttonBumperLeft);
     JoystickButton buttonBumperRight = new JoystickButton(driver,RobotMap.buttonBumperRight);
@@ -71,6 +74,9 @@ public class RobotContainer {
 
     buttonA_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeDown(intakeElbow));
     buttonY_dr.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeHome(intakeElbow));
+
+    buttonA_as.whenReleased((edu.wpi.first.wpilibj2.command.Command)new LiftBallsStop(indexer));
+    buttonA_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new LiftBalls(indexer));
 
   }
 
