@@ -8,10 +8,10 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,40 +23,30 @@ public class DriveTrain extends SubsystemBase {
    */
 
    //declare the motor crontrollers
-   private final WPI_VictorSPX frontRightVictor = new WPI_VictorSPX(RobotMap.VictorFrontRight);
-   private final WPI_VictorSPX frontLeftVictor = new WPI_VictorSPX(RobotMap.VictorFrontLeft);
-   private final WPI_TalonSRX backRightTalon = new WPI_TalonSRX(RobotMap.TalonBackRight);
-   private final WPI_TalonSRX backLeftTalon = new WPI_TalonSRX(RobotMap.TalonBackLeft);
+   private final WPI_TalonFX frontRightTalon = new WPI_TalonFX(RobotMap.FrontRightTalon);
+   private final WPI_TalonFX frontLeftTalon = new WPI_TalonFX(RobotMap.FrontLeftTalon);
+   private final WPI_TalonFX backRightTalon = new WPI_TalonFX(RobotMap.BackRightTalon);
+   private final WPI_TalonFX backLeftTalon = new WPI_TalonFX(RobotMap.BackLeftTalon);
+   private final WPI_TalonFX topRightTalon = new WPI_TalonFX(RobotMap.TopRightTalon);
+   private final WPI_TalonFX topLeftTalon = new WPI_TalonFX(RobotMap.TopLeftTalon);
   
 
    //groups the motor controllers into left and right groups
-   private final SpeedControllerGroup rightSCG = new SpeedControllerGroup(frontRightVictor, backRightTalon);
-   private final SpeedControllerGroup leftSCG = new SpeedControllerGroup(frontLeftVictor, backLeftTalon);
+   private final SpeedControllerGroup rightSCG = new SpeedControllerGroup(frontRightTalon, backRightTalon, topRightTalon);
+   private final SpeedControllerGroup leftSCG = new SpeedControllerGroup(frontLeftTalon, backLeftTalon, topLeftTalon);
 
    //declares the drive train (which consists of each motor controller)
    public final DifferentialDrive robotDrive = new DifferentialDrive(leftSCG, rightSCG);
 
-
-   private static DriveTrain instance;
-
-   private DriveTrain(){
-    init();
-  }
-
-   public static DriveTrain getInstance(){
-     if (instance == null){
-       instance = new DriveTrain();
-     }
-
-     return instance;
-   }
-
-   private void init(){
-
-    backRightTalon.setNeutralMode(NeutralMode.Brake);
-    backLeftTalon.setNeutralMode(NeutralMode.Brake);
-    frontLeftVictor.setNeutralMode(NeutralMode.Brake);
-    frontRightVictor.setNeutralMode(NeutralMode.Brake);
+   public DriveTrain(){
+     
+    frontRightTalon.setNeutralMode(NeutralMode.Coast);
+    frontLeftTalon.setNeutralMode(NeutralMode.Coast);
+    backRightTalon.setNeutralMode(NeutralMode.Coast);
+    backLeftTalon.setNeutralMode(NeutralMode.Coast);
+    topRightTalon.setNeutralMode(NeutralMode.Brake);
+    topLeftTalon.setNeutralMode(NeutralMode.Brake);
+    //todo:current limits
 
     robotDrive.setExpiration(1);
     robotDrive.setSafetyEnabled(false);
@@ -69,9 +59,15 @@ public class DriveTrain extends SubsystemBase {
     double turn = driver.getRawAxis(RobotMap.rightStickX);
     robotDrive.arcadeDrive(speed, turn, true);
 
-    SmartDashboard.putNumber("speed", speed);
-    SmartDashboard.putNumber("turn", turn);
+    SmartDashboard.putNumber("drivetrain speed", speed);
+    SmartDashboard.putNumber("drivetrain turn", turn);
   }
 
+  public boolean driveFoward(){
+    robotDrive.arcadeDrive(.4, 0.0, true);
+    Timer.delay(2);
+    robotDrive.arcadeDrive(0.0, 0.0, true);
+    return true;
+  }
 
 }

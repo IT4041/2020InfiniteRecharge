@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,37 +7,34 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.OI;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter;
 
-/**
- * An example command that uses an example subsystem.
- */
-public class ArcadeDrive extends CommandBase {
+public class TurretStartTargeting extends CommandBase {
 
-  private final DriveTrain my_driveTrain;
+  private final Turret m_Turret;
+  private final Shooter m_shooter;
 
-  /**
-   * Creates a new ExampleCommand.
-   *
-   * @param driveTrain The subsystem used by this command.
-   */
-  public ArcadeDrive(DriveTrain driveTrain) {
-    my_driveTrain = driveTrain;
+  public TurretStartTargeting(Turret in_turret, Shooter in_shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveTrain);
+    m_Turret = in_turret;
+    m_shooter = in_shooter;
+    addRequirements(m_Turret);
+    addRequirements(m_shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    my_driveTrain.arcade(OI.XboxDriver);
+    m_Turret.startTargeting();
+    m_shooter.startShooting();
   }
 
   // Called once the command ends or is interrupted.
@@ -48,6 +45,6 @@ public class ArcadeDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

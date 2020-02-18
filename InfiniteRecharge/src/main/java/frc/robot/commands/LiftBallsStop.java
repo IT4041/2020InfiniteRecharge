@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,26 +7,20 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.OI;
+import frc.robot.subsystems.Indexer;
 
-/**
- * An example command that uses an example subsystem.
- */
-public class ArcadeDrive extends CommandBase {
+public class LiftBallsStop extends CommandBase {
 
-  private final DriveTrain my_driveTrain;
+  private final Indexer m_Indexer;
 
   /**
-   * Creates a new ExampleCommand.
-   *
-   * @param driveTrain The subsystem used by this command.
+   * Creates a new LiftBallsStop.
    */
-  public ArcadeDrive(DriveTrain driveTrain) {
-    my_driveTrain = driveTrain;
+  public LiftBallsStop(Indexer in_Indexer) {
+    m_Indexer = in_Indexer;
+    addRequirements(m_Indexer);
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
@@ -37,7 +31,8 @@ public class ArcadeDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    my_driveTrain.arcade(OI.XboxDriver);
+    m_Indexer.Off();
+
   }
 
   // Called once the command ends or is interrupted.
@@ -48,6 +43,6 @@ public class ArcadeDrive extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
