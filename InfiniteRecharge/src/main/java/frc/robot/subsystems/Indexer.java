@@ -20,7 +20,7 @@ public class Indexer extends SubsystemBase {
   private RangeSensors m_RangeSensors;
   private int ballCount = 0;
   private int maxCount = 2;
-  private boolean autoIndex = false;
+  private boolean m_automate = false;
   private boolean bumped = false;
   private boolean intaking = false;
   /**
@@ -68,7 +68,7 @@ public class Indexer extends SubsystemBase {
   public void enabledAutoIndexing(boolean in_automate){
     //if true indexer will auto index and count balls
     //prepping for shooting 
-    autoIndex = in_automate;
+    m_automate = in_automate;
   }
 
   public void reset(){
@@ -137,7 +137,7 @@ public class Indexer extends SubsystemBase {
   private boolean doAutoIndexing(){
     // true if indexer should automatically be shuffling  
     // and counting balls as they are picked up
-    return autoIndex;
+    return m_automate;
   }
 
   private void addBall(){

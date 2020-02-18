@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RangeSensors extends SubsystemBase {
 
@@ -33,14 +32,6 @@ public class RangeSensors extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("1. Distance(mm)", (int)rangeSensorInternal.getRange());
-    SmartDashboard.putNumber("1. Std Dev(mm)", (int)rangeSensorInternal.getRangeSigma());
-    SmartDashboard.putString("1. Status", rangeSensorInternal.getStatus().toString());
-
-    SmartDashboard.putNumber("2. Distance(mm)", (int)rangeSensorExternal.getRange());
-    SmartDashboard.putNumber("2. Std Dev(mm)", (int)rangeSensorExternal.getRangeSigma());
-    SmartDashboard.putString("2. Status", rangeSensorExternal.getStatus().toString());
   }
 
   public boolean externalTriggered(){
