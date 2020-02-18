@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 public class Constants {
     public static final class DriveConstants {
         public static final double kTrackwidthFoot = 3.9245892079521147;
-        public static final DifferentialDriveKinematics = 
+        public static final DifferentialDriveKinematics kDriveKinematics = 
             new DifferentialDriveKinematics(kTrackwidthFoot);
 
     //found in the characterization tool suite
@@ -31,8 +31,8 @@ public class Constants {
         public static final double kMaxAccelerationFeetPerSecondSquared = 7;
 
         // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
-        public static final double kRamseteB = 2;
-        public static final double kRamseteZeta = 0.7;
+        public static final double kRamseteB = 2; //equals 6.56168 ft
+        public static final double kRamseteZeta = 0.7; //equals 2.29659 ft
     }
 
     
