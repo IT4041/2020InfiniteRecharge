@@ -15,6 +15,8 @@ public class Bombardier extends SubsystemBase {
    * Creates a new Bombardier. This is the targeting and firing controller
    * it coordinates the related aiming and firing subsystems
    * Indexer,Turret,RangeSensors, and shooter during match
+   * A bombardier is a member of a bomber crew in the US Air Force responsible 
+   *  for sighting and releasing bombs.
    */
   private final Indexer m_Indexer;
   private final Turret m_Turret;
@@ -50,10 +52,6 @@ public class Bombardier extends SubsystemBase {
     m_Indexer.enabledAutoIndexing(enabledAutoIndexing);
   }
 
-  public void setIndexerCountOnly(boolean countOnly){
-    m_Indexer.setCountOnly(countOnly);
-  }
-
   public void setIndexerBallCount(int in_ballCount){
     m_Indexer.setBallCount(in_ballCount);
   }
@@ -75,19 +73,7 @@ public class Bombardier extends SubsystemBase {
       if(m_Shooter.readyToShoot()){   
         m_Indexer.on();
       }
-      //else{ 
-      // i'm not sure this is necessary but i've included it
-      // as a comment so i remember that i thought this might help
-      // if we tun into problems with the indexer not turning back on
-      //  m_Indexer.setAutoIndexingOn(true);
-      //}
     }
-    //else{
-    // i'm not sure this is necessary but i've included it
-    // as a comment so i remember that i thought this might help
-    // if we tun into problems with the indexer not turning back on
-    //  m_Indexer.setAutoIndexingOn(true);
-    //}
   }
 
   private void noTargeting(){

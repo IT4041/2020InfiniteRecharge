@@ -23,13 +23,11 @@ public class Indexer extends SubsystemBase {
   private boolean autoIndex = false;
   private boolean bumped = false;
   private boolean intaking = false;
-  private boolean m_CountOnly = false;
   /**
    * Creates a new indexer.
    */
   public Indexer(RangeSensors in_RangeSensors) {
     m_RangeSensors = in_RangeSensors;
-    talon.configFactoryDefault();
     talon.configFactoryDefault();
     talon.configContinuousCurrentLimit(18);
     talon.configPeakCurrentLimit(30);
@@ -43,66 +41,77 @@ public class Indexer extends SubsystemBase {
 
     if(doAutoIndexing()){// if returns true let the indexer do it's thing
       if(this.safeToIndex()){// returns true if we don't have a full lift
-        this.index(false);
+      // index and count balls  
+      this.index(false);
       }
       else{
         //lift is full
         this.bumpBack();
       }
     }
+    else{
+      //count balls only
+      this.index(true);
+    }
   }
 
   public void on(){
+    //lift balls
     talon.set(ControlMode.PercentOutput, 0.85);
   }
 
   public void off(){
+    //stop lift motor
     talon.set(ControlMode.PercentOutput, 0.0);
   }
 
   public void enabledAutoIndexing(boolean in_automate){
+    //if true indexer will auto index and count balls
+    //prepping for shooting 
     autoIndex = in_automate;
   }
 
   public void reset(){
+    //reset indexer, funcitons is used after shooting
     ballCount = 0;
     bumped = false;
     intaking = false;
   }
 
   public void setBallCount(int in_ballCount){
+    //allow ball count to be modified. used by shoot preloaded
+    //autonomous command
     ballCount = in_ballCount;
   }
 
   public int getBallCount(){
+    //return how many balls have been processed
     return ballCount;
   }
 
-  public void setCountOnly(boolean in_CountOnly){
-    m_CountOnly = in_CountOnly;
-  }
+  // internal processing functions *************************************************
 
-  public void index(boolean countOnly){
+  private void index(boolean countOnly){
     //this functions moves and counts the balls as they pass threw the robot
 
     if(!m_RangeSensors.externalTriggered() && !m_RangeSensors.internalTriggered()){
-      // nothing is triggering either sensor
+      //nothing is triggering either sensor
       if(!countOnly){
         this.off(); //stage 0
       }
       intaking = false;
     }
     else if(m_RangeSensors.externalTriggered() && !m_RangeSensors.internalTriggered()){
-      // the external sensor is trigger only, so were intaking a ball
+      //the external sensor is trigger only, so were intaking a ball
       if(!countOnly){
         this.on(); // stage 1
       }
       intaking = true;
     }
     else if(!m_RangeSensors.externalTriggered() && m_RangeSensors.internalTriggered()){
-      // only the internal sensor is triggered, we must have moved a ball into the lift
-      // or one ball is just rattling around. That is why we check to see if intaking is true
-      // before incrementing the add counter
+      //only the internal sensor is triggered, we must have moved a ball into the lift
+      //or one ball is just rattling around. That is why we check to see if intaking is true
+      //before incrementing the add counter
       if(!countOnly){
         this.off(); //stage 2 & 4
       }
@@ -120,23 +129,26 @@ public class Indexer extends SubsystemBase {
     }
   }
 
-  // internal processing functions *************************************************
   private boolean safeToIndex(){
-    // boolean function that return true 
+    //boolean function that return true 
     //if more balls can be lifted
     return ballCount < maxCount;
   }
   private boolean doAutoIndexing(){
+    // true if indexer should automatically be shuffling  
+    // and counting balls as they are picked up
     return autoIndex;
   }
 
   private void addBall(){
+    //increment internal ball count
     ballCount++;
   }
 
   private void bumpBack(){
-    // this is a function to allow for moving the 
-    // balls slightly down the indexer
+    //this is a function to allow for moving the 
+    //balls slightly down the indexer to prevent 
+    //jamming of shooter head
     if(!bumped){
       talon.set(ControlMode.PercentOutput, -0.4);
       Timer.delay(0.1);

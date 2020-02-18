@@ -21,7 +21,7 @@ public class Shooter extends SubsystemBase {
   private final CANSparkMax sparkMax2 = new CANSparkMax(RobotMap.ShooterSparkMax2, MotorType.kBrushless);
   private final CANPIDController pidController = sparkMax1.getPIDController();
   private final CANEncoder encoder = sparkMax1.getEncoder();
-  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM, minRPM;
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, minRPM;
   private int accumulator = 0;
   private double velocity = 0.0;
 
@@ -43,7 +43,6 @@ public class Shooter extends SubsystemBase {
     kFF = 0.00002; //kFF = 0.0001754385964912281; possible value for voltage pid
     kMaxOutput = 1; 
     kMinOutput = -1;
-    maxRPM = 6550;
     minRPM = 4150;
 
     // set PID coefficients

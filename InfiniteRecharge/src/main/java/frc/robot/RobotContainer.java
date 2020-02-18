@@ -26,14 +26,14 @@ public class RobotContainer {
 
   //The robot's subsystems and commands are defined here...
   //components
-  private final Camera camera = new Camera();
-  private final ColorSensor colorSensor = new ColorSensor();
+  // private final Camera camera = new Camera();
+  // private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
   private final LimeLight limeLight = new LimeLight();
 
   public final DriveTrain driveTrain = new DriveTrain();
-  private final Elevator elevator = new Elevator();
-  private final ElevatorArm elevatorArm = new ElevatorArm();
+  // private final Elevator elevator = new Elevator();
+  // private final ElevatorArm elevatorArm = new ElevatorArm();
   private final Indexer indexer = new Indexer(rangeSensors);
   private final IntakeElbow intakeElbow = new IntakeElbow();
   private final IntakeWheels intakeWheels = new IntakeWheels();

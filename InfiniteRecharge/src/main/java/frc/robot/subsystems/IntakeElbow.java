@@ -10,21 +10,18 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
-import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class IntakeElbow extends SubsystemBase {
 
   private CANSparkMax sparkMax;
   private CANPIDController pidController;
-  //private CANEncoder encoder;
-  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   private double home, down;
-  public float kForwardSoftLimit, kReverseSoftLimit;
+  private float kForwardSoftLimit, kReverseSoftLimit;
 
   /**
    * Creates a new IntakeElbow.
@@ -47,11 +44,7 @@ public class IntakeElbow extends SubsystemBase {
      * CANSparkMax object
      */
     pidController = sparkMax.getPIDController();
-
-    // Encoder object created to display position values
-    //encoder = sparkMax.getEncoder();
     
-
     // PID coefficients
     kP = 0.025; 
     kI = 0;
@@ -81,77 +74,12 @@ public class IntakeElbow extends SubsystemBase {
 
     sparkMax.setClosedLoopRampRate(0.5);
     sparkMax.setSmartCurrentLimit(4, 30, 10);
-  
-
-    // display PID coefficients on SmartDashboard
-    // SmartDashboard.putNumber("IntakeElbow P Gain", kP);
-    // SmartDashboard.putNumber("IntakeElbow I Gain", kI);
-    // SmartDashboard.putNumber("IntakeElbow D Gain", kD);
-    // SmartDashboard.putNumber("IntakeElbow I Zone", kIz);
-    // SmartDashboard.putNumber("IntakeElbow Feed Forward", kFF);
-    // SmartDashboard.putNumber("IntakeElbow Max Output", kMaxOutput);
-    // SmartDashboard.putNumber("IntakeElbow Min Output", kMinOutput);
-    // SmartDashboard.putNumber("IntakeElbow Set Rotations", 0);
-    // SmartDashboard.putNumber("IntakeElbow kFowardSoftLimit", kForwardSoftLimit);
-    // SmartDashboard.putNumber("IntakeElbow kReverseSoftLimit", kReverseSoftLimit);
-
 
   }
 
   @Override
   public void periodic() {
     // // This method will be called once per scheduler run
-    //  // read PID coefficients from SmartDashboard
-    //  double p = SmartDashboard.getNumber("IntakeElbow P Gain", 0);
-    //  double i = SmartDashboard.getNumber("IntakeElbow I Gain", 0);
-    //  double d = SmartDashboard.getNumber("IntakeElbow D Gain", 0);
-    //  double iz = SmartDashboard.getNumber("IntakeElbow I Zone", 0);
-    //  double ff = SmartDashboard.getNumber("IntakeElbow Feed Forward", 0);
-    //  double max = SmartDashboard.getNumber("IntakeElbow Max Output", 0);
-    //  double min = SmartDashboard.getNumber("IntakeElbow Min Output", 0);
-    //  double rotations = SmartDashboard.getNumber("IntakeElbow Set Rotations", 0);
-    //  float fsl = (float)SmartDashboard.getNumber("IntakeElbow kFowardSoftLimit", 0);
-    //  float rsl = (float)SmartDashboard.getNumber("IntakeElbow kReverseSoftLimit", 0);
-
-    //  // if PID coefficients on SmartDashboard have changed, write new values to controller
-    //  if((p != kP)) { pidController.setP(p); kP = p; }
-    //  if((i != kI)) { pidController.setI(i); kI = i; }
-    //  if((d != kD)) { pidController.setD(d); kD = d; }
-    //  if((iz != kIz)) { pidController.setIZone(iz); kIz = iz; }
-    //  if((ff != kFF)) { pidController.setFF(ff); kFF = ff; }
-    //  if((max != kMaxOutput) || (min != kMinOutput)) { 
-    //    pidController.setOutputRange(min, max); 
-    //    kMinOutput = min; kMaxOutput = max; 
-    //  }
-
-    //  if((kForwardSoftLimit != fsl)) { 
-    //    sparkMax.setSoftLimit(CANSparkMax.SoftLimitDirection.kForward, fsl); 
-    //    kForwardSoftLimit = fsl;
-    //   }
-    //  if((kReverseSoftLimit != rsl)) { 
-    //    sparkMax.setSoftLimit(CANSparkMax.SoftLimitDirection.kReverse, rsl); 
-    //    kReverseSoftLimit = rsl;
-    //   }
- 
-     /**
-      * PIDController objects are commanded to a set point using the 
-      * SetReference() method.
-      * 
-      * The first parameter is the value of the set point, whose units vary;
-      * depending on the control type set in the second parameter.
-      * 
-      * The second parameter is the control type can be set to one of four 
-      * parameters:
-      *  com.revrobotics.ControlType.kDutyCycle
-      *  com.revrobotics.ControlType.kPosition
-      *  com.revrobotics.ControlType.kVelocity
-      *  com.revrobotics.ControlType.kVoltage
-      */
-
-    //  pidController.setReference(rotations, ControlType.kPosition);
-     
-    //  SmartDashboard.putNumber("IntakeElbow SetPoint", rotations);
-    //  SmartDashboard.putNumber("IntakeElbow ProcessVariable", encoder.getPosition());
   }
 
   public void home(){

@@ -27,6 +27,7 @@ public class ShootPreloaded extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //let indexer know about preloaded ball
     m_Bombardier.setIndexerBallCount(ballCount);
  
   }
@@ -34,8 +35,12 @@ public class ShootPreloaded extends CommandBase {
   // Called every time the schedMuler runs while the command is scheduled.
   @Override
   public void execute() {
+
+    //enable targeting and disable auto indexing
     m_Bombardier.target(true, false);
-    m_Bombardier.setIndexerCountOnly(true);
+
+    // function is finished when we've added the two balls 
+    // stored in the hopper
     done = m_Bombardier.getIndexerBallCount() > 2;
 
   }
@@ -43,8 +48,11 @@ public class ShootPreloaded extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    
+    //disable targeting and enable auto indexing
     m_Bombardier.target(false,true);
-    m_Bombardier.setIndexerCountOnly(false);
+
+    //reset indexer
     m_Bombardier.resetIndexer();
   }
   
