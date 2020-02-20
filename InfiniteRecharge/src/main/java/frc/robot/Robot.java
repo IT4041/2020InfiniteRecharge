@@ -99,6 +99,8 @@ public class Robot extends TimedRobot {
     }
     m_arcadeDrive = new ArcadeDrive(m_robotContainer.driveTrain, m_robotContainer.driver);
     m_arcadeDrive.execute();
+
+    m_robotContainer.enableAutoIndexing();
    
   }
 

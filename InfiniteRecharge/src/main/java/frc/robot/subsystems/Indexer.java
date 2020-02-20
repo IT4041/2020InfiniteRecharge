@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -33,16 +34,25 @@ public class Indexer extends SubsystemBase {
     talon.configPeakCurrentLimit(30);
     talon.configPeakCurrentDuration(200);
     talon.enableCurrentLimit(true);
+
+    SmartDashboard.putBoolean("Auto Indexing", false);
+    SmartDashboard.putNumber("Ball Count", 0);
+    SmartDashboard.putBoolean("addBall", false);
+
+    
   }
 
   @Override
   public void periodic() {
-  // This method will be called once per scheduler run
+    // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("Auto Indexing", this.doAutoIndexing());
+    SmartDashboard.putNumber("Ball Count", this.getBallCount());
+    SmartDashboard.putBoolean("addBall", false);
 
     if(doAutoIndexing()){// if returns true let the indexer do it's thing
       if(this.safeToIndex()){// returns true if we don't have a full lift
-      // index and count balls  
-      this.index(false);
+        // index and count balls  
+        this.index(false);
       }
       else{
         //lift is full
@@ -57,7 +67,7 @@ public class Indexer extends SubsystemBase {
 
   public void on(){
     //lift balls
-    talon.set(ControlMode.PercentOutput, 0.85);
+    talon.set(ControlMode.PercentOutput, 0.9);
   }
 
   public void off(){
@@ -73,7 +83,11 @@ public class Indexer extends SubsystemBase {
 
   public void reset(){
     //reset indexer, funcitons is used after shooting
-    ballCount = 0;
+    if (m_RangeSensors.internalTriggered()) {
+      ballCount = 1;
+    }else{
+      ballCount = 0;
+    }
     bumped = false;
     intaking = false;
   }
@@ -105,6 +119,7 @@ public class Indexer extends SubsystemBase {
       //the external sensor is trigger only, so were intaking a ball
       if(!countOnly){
         this.on(); // stage 1
+        Timer.delay(0.1);
       }
       intaking = true;
     }
@@ -124,6 +139,7 @@ public class Indexer extends SubsystemBase {
       //both sensor are triggered, we have a ball and we're getting another
       if(!countOnly){
         this.on(); // stage 3
+        Timer.delay(0.1);
       }
       intaking = true;
     }
@@ -142,7 +158,9 @@ public class Indexer extends SubsystemBase {
 
   private void addBall(){
     //increment internal ball count
+    SmartDashboard.putBoolean("addBall", true);
     ballCount++;
+    Timer.delay(0.5);
   }
 
   private void bumpBack(){

@@ -26,7 +26,7 @@ public class RobotContainer {
 
   //The robot's subsystems and commands are defined here...
   //components
-  // private final Camera camera = new Camera();
+  private final Camera camera = new Camera();
   // private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
   private final LimeLight limeLight = new LimeLight();
@@ -92,5 +92,9 @@ public class RobotContainer {
 
   public void disabledLEDS(){
     limeLight.ledOff();
+  }
+
+  public void enableAutoIndexing(){
+    indexer.enabledAutoIndexing(true);
   }
 }

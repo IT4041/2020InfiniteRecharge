@@ -9,6 +9,7 @@ package frc.robot.subsystems.components;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LimeLight extends SubsystemBase {
   /**
@@ -35,6 +36,8 @@ public class LimeLight extends SubsystemBase {
     tv = limelightNT.getEntry("tv").getDouble(0);
     tx = limelightNT.getEntry("tx").getDouble(0);
     ta = limelightNT.getEntry("ta").getDouble(0);
+
+    SmartDashboard.putBoolean("HasValidTarget", hasValidTarget());
   }
 
   public void ledOn(){

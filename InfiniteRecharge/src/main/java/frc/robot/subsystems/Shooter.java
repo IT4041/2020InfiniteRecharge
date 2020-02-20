@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
@@ -36,14 +37,14 @@ public class Shooter extends SubsystemBase {
     sparkMax2.follow(sparkMax1, true);
 
     // PID coefficients
-    kP = 0.001; 
+    kP = 0.0001; 
     kI = 0;
-    kD = 0.00002; 
+    kD = 0.0; 
     kIz = 0; 
-    kFF = 0.00002; //kFF = 0.0001754385964912281; possible value for voltage pid
+    kFF = 0.0001815; //possible value for voltage pid
     kMaxOutput = 1; 
     kMinOutput = -1;
-    minRPM = 4150;
+    minRPM = 3525;
 
     // set PID coefficients
     pidController.setP(kP);
@@ -53,10 +54,17 @@ public class Shooter extends SubsystemBase {
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
 
+    SmartDashboard.putNumber("Calculated RPMS", 0);
+    SmartDashboard.putBoolean("Ready to Shoot", false);
+    SmartDashboard.putNumber("Actual RPMS", 0);
+
   }
 
   @Override
   public void periodic() {
+
+    SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
+    
   }
 
   // todo: change pid to voltage
@@ -68,27 +76,28 @@ public class Shooter extends SubsystemBase {
   private double calculateRPMs(double distance){
 
     double finalRPMS;
-    double origin = 4150;
+    double origin = minRPM;
 
     //calculate rpms 
-    finalRPMS =  origin + (((distance - 120) / 12)*70);
+    finalRPMS =  origin + (((distance - 120) / 12)*57.5);
 
     //use min rpms if calculated value is below min threshold
     finalRPMS = (finalRPMS < minRPM) ? minRPM : finalRPMS;
-
+    SmartDashboard.putNumber("Calculated RPMS", finalRPMS);
     return finalRPMS;
   }
 
   public boolean readyToShoot(){
     boolean atSpeed = false;
     double measuredVelo = encoder.getVelocity();
-    double compensatedVelo = velocity * 0.87;
+    double compensatedVelo = velocity;
 
-    if(measuredVelo < (compensatedVelo + 25) && measuredVelo > (compensatedVelo - 25) && measuredVelo > 3000){
+    if(measuredVelo < (compensatedVelo + 25) && measuredVelo > (compensatedVelo - 25) && measuredVelo > 3300){
       atSpeed = true;
       accumulator++;
     }
-    return atSpeed && accumulator > 50;
+    SmartDashboard.putBoolean("Ready to Shoot", atSpeed && accumulator > 2);
+    return atSpeed && accumulator > 2;
   }
 
   private void disablePID(){

@@ -7,6 +7,7 @@
 
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Bombardier;
 
@@ -41,7 +42,11 @@ public class ShootPreloaded extends CommandBase {
 
     // function is finished when we've added the two balls 
     // stored in the hopper
-    done = m_Bombardier.getIndexerBallCount() > 2;
+    
+    if( m_Bombardier.getIndexerBallCount() >= 2){
+      Timer.delay(0.45);
+      done = true;
+    }
 
   }
 

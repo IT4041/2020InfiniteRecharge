@@ -36,6 +36,7 @@ public class TurretEndTargeting extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_Bombardier.target(false, true);
+    m_Bombardier.resetIndexer();
   }
 
   // Returns true when the command should end.

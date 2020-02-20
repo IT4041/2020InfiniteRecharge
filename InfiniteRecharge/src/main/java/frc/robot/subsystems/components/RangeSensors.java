@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems.components;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import com.playingwithfusion.TimeOfFlight;
@@ -14,7 +15,8 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 
 public class RangeSensors extends SubsystemBase {
 
-   static double ballThreshold = 350;//tbd
+   static double ballThresholdExt = 350;
+   static double ballThresholdInt = 200;
 
   // Create instance of Time-Of_Flight driver for device 1 & 2
   private final TimeOfFlight rangeSensorInternal = new TimeOfFlight(RobotMap.TimeOfFlightInternal);
@@ -32,13 +34,15 @@ public class RangeSensors extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putBoolean("rangeSensorExternal",this.externalTriggered());
+    SmartDashboard.putBoolean("rangeSensorInternal", this.internalTriggered());
   }
 
   public boolean externalTriggered(){
-    return rangeSensorExternal.getRange() < ballThreshold;
+    return rangeSensorExternal.getRange() < ballThresholdExt;
   }
 
   public boolean internalTriggered(){
-    return rangeSensorInternal.getRange() < ballThreshold;
+    return rangeSensorInternal.getRange() < ballThresholdInt;
   }
 }
