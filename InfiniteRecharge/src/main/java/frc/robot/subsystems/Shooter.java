@@ -25,6 +25,8 @@ public class Shooter extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, minRPM;
   private int accumulator = 0;
   private double velocity = 0.0;
+  private double distanceRPMFactor = 60;
+  private double rpmTolerance = 25;
 
   /**
    * Creates a new Shooter. This subsystem controls the shooter head
@@ -36,12 +38,15 @@ public class Shooter extends SubsystemBase {
 
     sparkMax2.follow(sparkMax1, true);
 
+    sparkMax1.enableVoltageCompensation(12);
+    sparkMax2.enableVoltageCompensation(12);
+
     // PID coefficients
     kP = 0.0001; 
     kI = 0;
     kD = 0.0; 
     kIz = 0; 
-    kFF = 0.0001815; //possible value for voltage pid
+    kFF = 0.0001715; //possible value for voltage pid
     kMaxOutput = 1; 
     kMinOutput = -1;
     minRPM = 3525;
@@ -53,10 +58,11 @@ public class Shooter extends SubsystemBase {
     pidController.setIZone(kIz);
     pidController.setFF(kFF);
     pidController.setOutputRange(kMinOutput, kMaxOutput);
-
+    
     SmartDashboard.putNumber("Calculated RPMS", 0);
     SmartDashboard.putBoolean("Ready to Shoot", false);
     SmartDashboard.putNumber("Actual RPMS", 0);
+    SmartDashboard.putNumber("RPM diff", 0);
 
   }
 
@@ -79,7 +85,7 @@ public class Shooter extends SubsystemBase {
     double origin = minRPM;
 
     //calculate rpms 
-    finalRPMS =  origin + (((distance - 120) / 12)*57.5);
+    finalRPMS =  origin + (((distance - 120) / 12)*distanceRPMFactor);
 
     //use min rpms if calculated value is below min threshold
     finalRPMS = (finalRPMS < minRPM) ? minRPM : finalRPMS;
@@ -90,12 +96,12 @@ public class Shooter extends SubsystemBase {
   public boolean readyToShoot(){
     boolean atSpeed = false;
     double measuredVelo = encoder.getVelocity();
-    double compensatedVelo = velocity;
 
-    if(measuredVelo < (compensatedVelo + 25) && measuredVelo > (compensatedVelo - 25) && measuredVelo > 3300){
+    if(measuredVelo <= (velocity + rpmTolerance) && measuredVelo >= (velocity - rpmTolerance) && measuredVelo > 3300){
       atSpeed = true;
       accumulator++;
     }
+    SmartDashboard.putNumber("RPM diff", velocity-measuredVelo);
     SmartDashboard.putBoolean("Ready to Shoot", atSpeed && accumulator > 2);
     return atSpeed && accumulator > 2;
   }

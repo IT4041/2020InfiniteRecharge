@@ -7,7 +7,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
@@ -15,20 +18,27 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import frc.robot.subsystems.components.RangeSensors;
 
+//todo: voltage compensation
+
 public class Indexer extends SubsystemBase {
 
   private final TalonSRX talon = new TalonSRX(RobotMap.IndexerTalon);
+  private final PowerDistributionPanel pdp = new PowerDistributionPanel(RobotMap.PDPID);
   private RangeSensors m_RangeSensors;
+  private XboxController m_DriveController;
   private int ballCount = 0;
   private int maxCount = 2;
   private boolean m_automate = false;
   private boolean bumped = false;
   private boolean intaking = false;
+  private double idxJamThreshold = 65;
   /**
    * Creates a new indexer.
    */
-  public Indexer(RangeSensors in_RangeSensors) {
+
+  public Indexer(RangeSensors in_RangeSensors, XboxController driver) {
     m_RangeSensors = in_RangeSensors;
+    m_DriveController = driver;
     talon.configFactoryDefault();
     talon.configContinuousCurrentLimit(18);
     talon.configPeakCurrentLimit(30);
@@ -38,8 +48,6 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putBoolean("Auto Indexing", false);
     SmartDashboard.putNumber("Ball Count", 0);
     SmartDashboard.putBoolean("addBall", false);
-
-    
   }
 
   @Override
@@ -48,6 +56,10 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putBoolean("Auto Indexing", this.doAutoIndexing());
     SmartDashboard.putNumber("Ball Count", this.getBallCount());
     SmartDashboard.putBoolean("addBall", false);
+    SmartDashboard.putNumber("Indexer current", this.pdp.getCurrent(RobotMap.pdpIndexer));
+
+    //monitoring indexer for jams
+    this.unJamIDX();
 
     if(doAutoIndexing()){// if returns true let the indexer do it's thing
       if(this.safeToIndex()){// returns true if we don't have a full lift
@@ -173,6 +185,24 @@ public class Indexer extends SubsystemBase {
       talon.set(ControlMode.PercentOutput, 0.0);
       bumped = true;
     }
+  }
+
+  private void unJamIDX(){
+    //this will run if indexer amps is above 30 - 2 balls are jammed
+    //and warn the driver by rumbling the joystick
+    double indexerCurrent = pdp.getCurrent(RobotMap.pdpIndexer);
+    m_DriveController.setRumble(RumbleType.kLeftRumble, 0);
+    m_DriveController.setRumble(RumbleType.kRightRumble, 0);
+
+    if (indexerCurrent > idxJamThreshold){
+      m_DriveController.setRumble(RumbleType.kLeftRumble, 1);
+      m_DriveController.setRumble(RumbleType.kRightRumble, 1);
+
+      talon.set(ControlMode.PercentOutput, -0.5);
+      Timer.delay(0.6);
+      talon.set(ControlMode.PercentOutput, 0.0);
+    }
+
   }
 
 }

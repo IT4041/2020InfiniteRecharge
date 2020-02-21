@@ -51,6 +51,10 @@ public class RobotMap {
 	public static final int ElevatorTalon1 = 1; //PDP:??
 	public static final int ElevatorTalon2 = 3; //PDP:??
 	//end Elevator
+
+	//PDP
+	public static final int PDPID = 0;
+	public static final int pdpIndexer = 7;
 	
     //start xbox *****************************************
 	public static final int xboxControllerDriver = 0;

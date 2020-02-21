@@ -10,11 +10,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 public class DriveTrain extends SubsystemBase {
@@ -44,23 +45,34 @@ public class DriveTrain extends SubsystemBase {
     frontLeftTalon.setNeutralMode(NeutralMode.Coast);
     backRightTalon.setNeutralMode(NeutralMode.Coast);
     backLeftTalon.setNeutralMode(NeutralMode.Coast);
+
+    // braking only the two top motors gets us an appropriate
+    // amount of braking
     topRightTalon.setNeutralMode(NeutralMode.Brake);
     topLeftTalon.setNeutralMode(NeutralMode.Brake);
-    //todo:current limits
 
     robotDrive.setExpiration(1);
     robotDrive.setSafetyEnabled(false);
-    
+
+    //supConfig values; true = current limiting is on, set to 40 amp max, motors can run at 60 apms for 1 second then falls back to 40 amps 
+    SupplyCurrentLimitConfiguration supConfig = new SupplyCurrentLimitConfiguration(true, 40, 60, 1);
+    frontRightTalon.configSupplyCurrentLimit(supConfig);
+    frontLeftTalon.configSupplyCurrentLimit(supConfig);
+    backRightTalon.configSupplyCurrentLimit(supConfig);
+    backLeftTalon.configSupplyCurrentLimit(supConfig);
+
+    topRightTalon.configSupplyCurrentLimit(supConfig);
+    topLeftTalon.configSupplyCurrentLimit(supConfig);
    }
 
    public void arcade(XboxController driver){
 
     double speed = -driver.getRawAxis(RobotMap.leftStickY);
     double turn = driver.getRawAxis(RobotMap.rightStickX);
-    robotDrive.arcadeDrive(speed, turn, true);
 
-    SmartDashboard.putNumber("drivetrain speed", speed);
-    SmartDashboard.putNumber("drivetrain turn", turn);
+    turn = turn * 0.65;
+
+    robotDrive.arcadeDrive(speed, turn, true);
   }
 
   public boolean driveFoward(){

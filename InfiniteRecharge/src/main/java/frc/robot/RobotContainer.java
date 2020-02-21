@@ -26,6 +26,9 @@ public class RobotContainer {
 
   //The robot's subsystems and commands are defined here...
   //components
+  public final XboxController driver = new XboxController(RobotMap.xboxControllerDriver);
+  private final XboxController assist = new XboxController(RobotMap.xboxControllerAssist);
+
   private final Camera camera = new Camera();
   // private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
@@ -34,16 +37,12 @@ public class RobotContainer {
   public final DriveTrain driveTrain = new DriveTrain();
   // private final Elevator elevator = new Elevator();
   // private final ElevatorArm elevatorArm = new ElevatorArm();
-  private final Indexer indexer = new Indexer(rangeSensors);
+  private final Indexer indexer = new Indexer(rangeSensors, driver);
   private final IntakeElbow intakeElbow = new IntakeElbow();
   private final IntakeWheels intakeWheels = new IntakeWheels();
   private final Turret turret = new Turret();
   private final Shooter shooter = new Shooter();
   private final Bombardier bombardier = new Bombardier(indexer, turret, shooter, limeLight);
-
-  public final XboxController driver = new XboxController(RobotMap.xboxControllerDriver);
-  private final XboxController assist = new XboxController(RobotMap.xboxControllerAssist);
-
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.

@@ -67,7 +67,7 @@ public class Turret extends PIDSubsystem {
       // 1.)add the offset to current position
       current = current + trackTarget();
 
-      //Only apply changes that are less than 90 off starting position
+      //Only apply changes that are less than 90 degrees off starting position
       //if target positions is greater than 90 return 90 with the proper sign(+/-)
       current = Math.abs(current) <= maxOffset ? current : (Math.signum(current) * maxOffset);
       // 2.) update pid setpoint to new position
