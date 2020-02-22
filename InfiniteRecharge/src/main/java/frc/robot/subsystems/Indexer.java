@@ -77,9 +77,14 @@ public class Indexer extends SubsystemBase {
     }
   }
 
-  public void on(){
+  public void onShoot(){
+    //lift balls fast for shooting
+    talon.set(ControlMode.PercentOutput, 0.95);
+  }
+
+  public void onIndex(){
     //lift balls
-    talon.set(ControlMode.PercentOutput, 0.9);
+    talon.set(ControlMode.PercentOutput, 0.65);
   }
 
   public void off(){
@@ -96,7 +101,7 @@ public class Indexer extends SubsystemBase {
   public void reset(){
     //reset indexer, funcitons is used after shooting
     if (m_RangeSensors.internalTriggered()) {
-      ballCount = 1;
+      ballCount = 2;
     }else{
       ballCount = 0;
     }
@@ -130,8 +135,8 @@ public class Indexer extends SubsystemBase {
     else if(m_RangeSensors.externalTriggered() && !m_RangeSensors.internalTriggered()){
       //the external sensor is trigger only, so were intaking a ball
       if(!countOnly){
-        this.on(); // stage 1
-        Timer.delay(0.1);
+        this.onIndex(); // stage 1
+        //Timer.delay(0.1);
       }
       intaking = true;
     }
@@ -150,8 +155,8 @@ public class Indexer extends SubsystemBase {
     else{
       //both sensor are triggered, we have a ball and we're getting another
       if(!countOnly){
-        this.on(); // stage 3
-        Timer.delay(0.1);
+        this.onIndex(); // stage 3
+        //Timer.delay(0.1);
       }
       intaking = true;
     }

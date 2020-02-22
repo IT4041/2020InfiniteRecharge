@@ -27,8 +27,8 @@ public class RangeSensors extends SubsystemBase {
   public RangeSensors() {
     // Configure time of flight sensor for short ranging mode and sample
     // distance every 5 ms
-    rangeSensorInternal.setRangingMode(RangingMode.Short, 5);
-    rangeSensorExternal.setRangingMode(RangingMode.Short, 5);
+    rangeSensorInternal.setRangingMode(RangingMode.Short, 1);
+    rangeSensorExternal.setRangingMode(RangingMode.Short, 1);
 
   }
 

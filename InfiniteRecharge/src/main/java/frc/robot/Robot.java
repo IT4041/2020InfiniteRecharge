@@ -97,6 +97,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
     m_arcadeDrive = new ArcadeDrive(m_robotContainer.driveTrain, m_robotContainer.driver);
     m_arcadeDrive.execute();
 

@@ -25,7 +25,7 @@ public class Shooter extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, minRPM;
   private int accumulator = 0;
   private double velocity = 0.0;
-  private double distanceRPMFactor = 60;
+  private double distanceRPMFactor = 62.5;
   private double rpmTolerance = 25;
 
   /**
