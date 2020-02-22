@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.RobotMap;
+import frc.robot.subsystems.components.NavX;
 
 public class DriveTrain extends SubsystemBase {
   /**
@@ -30,6 +31,7 @@ public class DriveTrain extends SubsystemBase {
    private final WPI_TalonFX backLeftTalon = new WPI_TalonFX(RobotMap.BackLeftTalon);
    private final WPI_TalonFX topRightTalon = new WPI_TalonFX(RobotMap.TopRightTalon);
    private final WPI_TalonFX topLeftTalon = new WPI_TalonFX(RobotMap.TopLeftTalon);
+   private NavX m_NavX;
   
 
    //groups the motor controllers into left and right groups
@@ -39,8 +41,10 @@ public class DriveTrain extends SubsystemBase {
    //declares the drive train (which consists of each motor controller)
    public final DifferentialDrive robotDrive = new DifferentialDrive(leftSCG, rightSCG);
 
-   public DriveTrain(){
+   public DriveTrain(NavX in_navX){
      
+    m_NavX = in_navX;
+    
     frontRightTalon.setNeutralMode(NeutralMode.Coast);
     frontLeftTalon.setNeutralMode(NeutralMode.Coast);
     backRightTalon.setNeutralMode(NeutralMode.Coast);

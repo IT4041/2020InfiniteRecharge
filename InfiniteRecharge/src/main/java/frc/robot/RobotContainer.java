@@ -33,8 +33,9 @@ public class RobotContainer {
   // private final ColorSensor colorSensor = new ColorSensor();
   private final RangeSensors rangeSensors = new RangeSensors();
   private final LimeLight limeLight = new LimeLight();
+  private final NavX navX = new NavX();
 
-  public final DriveTrain driveTrain = new DriveTrain();
+  public final DriveTrain driveTrain = new DriveTrain(navX);
   // private final Elevator elevator = new Elevator();
   // private final ElevatorArm elevatorArm = new ElevatorArm();
   private final Indexer indexer = new Indexer(rangeSensors, driver);
