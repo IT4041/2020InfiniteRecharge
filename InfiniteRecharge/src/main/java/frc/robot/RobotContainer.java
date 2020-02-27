@@ -40,7 +40,7 @@ public class RobotContainer {
   // private final ElevatorArm elevatorArm = new ElevatorArm();
   private final Indexer indexer = new Indexer(rangeSensors, driver);
   private final IntakeElbow intakeElbow = new IntakeElbow();
-  private final IntakeWheels intakeWheels = new IntakeWheels();
+  private final IntakeWheels intakeWheels = new IntakeWheels(assist);
   private final Turret turret = new Turret();
   private final Shooter shooter = new Shooter();
   private final Bombardier bombardier = new Bombardier(indexer, turret, shooter, limeLight);
@@ -71,11 +71,17 @@ public class RobotContainer {
     JoystickButton buttonX_as = new JoystickButton(assist,RobotMap.buttonX);
     JoystickButton buttonB_as = new JoystickButton(assist,RobotMap.buttonB);
 
+    JoystickButton buttonBumperRight_as = new JoystickButton(assist,RobotMap.buttonBumperRight);
+
     buttonX_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOn(intakeWheels));
     buttonB_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOff(intakeWheels));
 
     buttonA_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeDown(intakeElbow));
     buttonY_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeHome(intakeElbow));
+
+    buttonBumperRight_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsBack(intakeWheels));
+    buttonBumperRight_as.whenReleased((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOff(intakeWheels));
+
 
   }
 

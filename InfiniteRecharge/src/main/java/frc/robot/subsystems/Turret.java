@@ -35,7 +35,7 @@ public class Turret extends PIDSubsystem {
   public Turret() {
     super(
         // The PIDController used by the subsystem
-        new PIDController(0.0425, 0, 0.0003)
+        new PIDController(0.0275, 0, 0.0003, 0.01)
     );
 
     // turn on pid controller
@@ -49,13 +49,14 @@ public class Turret extends PIDSubsystem {
     super.m_controller.setTolerance(2);
 
     SmartDashboard.putBoolean("onTarget", false);
-    
+    SmartDashboard.putBoolean("Aquire Target", false);
   }
 
   @Override
   public void periodic() {
 
     SmartDashboard.putBoolean("onTarget", this.onTarget());
+    SmartDashboard.putBoolean("Aquire Target", this.aquireTarget);
 
     //Make sure the super's pid is running
     super.periodic(); 
@@ -69,7 +70,7 @@ public class Turret extends PIDSubsystem {
 
       //Only apply changes that are less than 90 degrees off starting position
       //if target positions is greater than 90 return 90 with the proper sign(+/-)
-      current = Math.abs(current) <= maxOffset ? current : (Math.signum(current) * maxOffset);
+      //current = Math.abs(current) <= maxOffset ? current : (Math.signum(current) * maxOffset);
       // 2.) update pid setpoint to new position
       this.setSetpoint(current);
       // 3.) delay thread so adjustment can happen

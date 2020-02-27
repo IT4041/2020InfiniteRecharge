@@ -25,7 +25,7 @@ public class Shooter extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, minRPM;
   private int accumulator = 0;
   private double velocity = 0.0;
-  private double distanceRPMFactor = 62.5;
+  private double distanceRPMFactor = 67.5;
   private double rpmTolerance = 25;
 
   /**
@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase {
     kFF = 0.0001715; //possible value for voltage pid
     kMaxOutput = 1; 
     kMinOutput = -1;
-    minRPM = 3525;
+    minRPM = 3625;
 
     // set PID coefficients
     pidController.setP(kP);
@@ -63,13 +63,20 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putBoolean("Ready to Shoot", false);
     SmartDashboard.putNumber("Actual RPMS", 0);
     SmartDashboard.putNumber("RPM diff", 0);
+    SmartDashboard.putNumber("Distance Multiplier", distanceRPMFactor);
 
   }
 
   @Override
   public void periodic() {
 
+    
     SmartDashboard.putNumber("Actual RPMS", encoder.getVelocity());
+    double dist =  SmartDashboard.getNumber("Distance Multiplier", distanceRPMFactor);
+
+    if(dist != distanceRPMFactor){
+      distanceRPMFactor = dist;
+    }
     
   }
 

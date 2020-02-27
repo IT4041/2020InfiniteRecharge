@@ -55,6 +55,7 @@ public class RobotMap {
 	//PDP
 	public static final int PDPID = 0;
 	public static final int pdpIndexer = 7;
+	public static final int pdpIntake = 11;
 	
     //start xbox *****************************************
 	public static final int xboxControllerDriver = 0;

@@ -54,9 +54,9 @@ public class IntakeElbow extends SubsystemBase {
     kMaxOutput = 1; 
     kMinOutput = -1;
     kForwardSoftLimit = 0;
-    kReverseSoftLimit = -77;
+    kReverseSoftLimit = -90;
     home = 0;
-    down = -77;
+    down = kReverseSoftLimit;
 
     // set PID coefficients
     pidController.setP(kP);

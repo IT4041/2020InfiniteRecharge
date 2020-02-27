@@ -23,7 +23,7 @@ public class LimeLight extends SubsystemBase {
   // ta	Target Area (0% of image to 100% of image)
   private final NetworkTable limelightNT = NetworkTableInstance.getDefault().getTable("limelight");
 
-  private double tv,tx,ta;
+  private double tv,tx,ta,ty;
 
   public LimeLight() {
     //make sure led is off when lime light is initialized
@@ -36,6 +36,7 @@ public class LimeLight extends SubsystemBase {
     tv = limelightNT.getEntry("tv").getDouble(0);
     tx = limelightNT.getEntry("tx").getDouble(0);
     ta = limelightNT.getEntry("ta").getDouble(0);
+    //ty = limelightNT.getEntry("ty").getDouble(0);
 
     SmartDashboard.putBoolean("HasValidTarget", hasValidTarget());
   }
@@ -68,6 +69,8 @@ public class LimeLight extends SubsystemBase {
     delta = Math.sqrt(delta);
     delta = k/delta;
 
+    SmartDashboard.putNumber("distance", Math.round(delta));
     return  Math.round(delta);
   }
+  
 }
