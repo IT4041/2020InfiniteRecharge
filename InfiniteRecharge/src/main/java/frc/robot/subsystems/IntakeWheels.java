@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +23,7 @@ public class IntakeWheels extends SubsystemBase {
   private final PowerDistributionPanel pdp = new PowerDistributionPanel(RobotMap.PDPID);
   private double intakeJamThreshold = 65;
   private XboxController m_AssistController;
+  private boolean wheelsOn;
   /**
    * Creates a new IntakeWheels.
    */
@@ -34,6 +34,7 @@ public class IntakeWheels extends SubsystemBase {
     talon.configPeakCurrentDuration(200);
     talon.enableCurrentLimit(true);
     m_AssistController = assist;
+    wheelsOn = false; 
   }
 
 @Override
@@ -46,6 +47,7 @@ public class IntakeWheels extends SubsystemBase {
 
   public void on(){
     talon.set(ControlMode.PercentOutput, 0.65);
+    wheelsOn = true;
   }
 
   public void reverse(){
@@ -54,6 +56,16 @@ public class IntakeWheels extends SubsystemBase {
 
   public void off(){
     talon.set(ControlMode.PercentOutput, 0.0); 
+    wheelsOn = false;
+  }
+
+  public void returnToPrevState(){
+    if(wheelsOn){
+      this.on();
+    }
+    else{
+      this.off();
+    }
   }
 
   private void unJamIntake(){
@@ -71,6 +83,5 @@ public class IntakeWheels extends SubsystemBase {
       // Timer.delay(0.6);
       // talon.set(ControlMode.PercentOutput, 0.0);
     }
-  
   }
 }
