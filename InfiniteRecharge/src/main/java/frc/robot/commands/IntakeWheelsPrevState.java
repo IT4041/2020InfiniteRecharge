@@ -10,13 +10,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeWheels;
 
-public class IntakeWheelsOff extends CommandBase {
+public class IntakeWheelsPrevState extends CommandBase {
 
   private final IntakeWheels m_IntakeWheels;
   /**
    * Creates a new IntakeDown.
    */
-  public IntakeWheelsOff(IntakeWheels in_IntakeWheels) {
+  public IntakeWheelsPrevState(IntakeWheels in_IntakeWheels) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_IntakeWheels = in_IntakeWheels;
     addRequirements(m_IntakeWheels);
@@ -30,7 +30,7 @@ public class IntakeWheelsOff extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_IntakeWheels.off();
+    m_IntakeWheels.returnToPrevState();
   }
 
   // Called once the command ends or is interrupted.

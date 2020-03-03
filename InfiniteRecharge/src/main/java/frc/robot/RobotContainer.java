@@ -43,7 +43,7 @@ public class RobotContainer {
   private final IntakeWheels intakeWheels = new IntakeWheels(assist);
   private final Turret turret = new Turret();
   private final Shooter shooter = new Shooter();
-  private final Bombardier bombardier = new Bombardier(indexer, turret, shooter, limeLight);
+  private final Bombardier bombardier = new Bombardier(indexer, turret, shooter, limeLight, intakeWheels);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -80,7 +80,7 @@ public class RobotContainer {
     buttonY_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeHome(intakeElbow));
 
     buttonBumperRight_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsBack(intakeWheels));
-    buttonBumperRight_as.whenReleased((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsOff(intakeWheels));
+    buttonBumperRight_as.whenReleased((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsPrevState(intakeWheels));
 
 
   }

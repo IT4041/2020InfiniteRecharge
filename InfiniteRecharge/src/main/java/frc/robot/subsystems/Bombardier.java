@@ -22,14 +22,16 @@ public class Bombardier extends SubsystemBase {
   private final Turret m_Turret;
   private final Shooter m_Shooter;
   private final LimeLight m_LimeLight;
+  private final IntakeWheels m_IntakeWheels;
 
   private boolean activateTargeting = false;
 
-  public Bombardier(Indexer in_Indexer, Turret in_Turret, Shooter in_Shooter, LimeLight in_LimeLight) {
+  public Bombardier(Indexer in_Indexer, Turret in_Turret, Shooter in_Shooter, LimeLight in_LimeLight, IntakeWheels in_IntakeWheels) {
     m_Indexer = in_Indexer;
     m_Turret = in_Turret;
     m_Shooter = in_Shooter;
     m_LimeLight = in_LimeLight;
+    m_IntakeWheels = in_IntakeWheels;
   }
 
   @Override
@@ -72,6 +74,7 @@ public class Bombardier extends SubsystemBase {
       m_Shooter.on(m_LimeLight.getDistanceToTarget());
       if(m_Shooter.readyToShoot()){   
         m_Indexer.onShoot();
+        m_IntakeWheels.on();
       }
     }
   }

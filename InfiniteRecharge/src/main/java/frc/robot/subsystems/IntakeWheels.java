@@ -26,7 +26,7 @@ public class IntakeWheels extends SubsystemBase {
   private boolean wheelsOn;
   /**
    * Creates a new IntakeWheels.
-   */
+   */ 
   public IntakeWheels(XboxController assist) {
     talon.configFactoryDefault();
     talon.configContinuousCurrentLimit(18);
