@@ -52,6 +52,10 @@ public class RobotMap {
 	public static final int ElevatorTalon2 = 3; //PDP:??
 	//end Elevator
 
+	//Bar Leveler
+	public static final int BarLeverTalon = 9; //PDP:??
+	//end Bar Leveler
+
 	//PDP
 	public static final int PDPID = 0;
 	public static final int pdpIndexer = 7;
@@ -79,7 +83,7 @@ public class RobotMap {
 	public static final int leftStickX = 0;
 	
 	public static final int rightTrigger = 3;
-	public static final int leftTrigger = 3;
+	public static final int leftTrigger = 2;
 
 	public static final int rightJoystickPush = 12;
 	public static final int leftJoystickPush = 11;

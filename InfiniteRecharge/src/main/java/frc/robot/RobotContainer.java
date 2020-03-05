@@ -35,6 +35,7 @@ public class RobotContainer {
   private final LimeLight limeLight = new LimeLight();
   private final NavX navX = new NavX();
 
+  public final BarLeveler barLeveler = new BarLeveler(navX);
   public final DriveTrain driveTrain = new DriveTrain(navX);
   // private final Elevator elevator = new Elevator();
   // private final ElevatorArm elevatorArm = new ElevatorArm();

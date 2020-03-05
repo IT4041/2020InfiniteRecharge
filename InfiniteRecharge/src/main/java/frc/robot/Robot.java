@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.ArcadeDrive;
+import frc.robot.commands.BarLevelerMove;
+import frc.robot.subsystems.BarLeveler;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,6 +26,7 @@ public class Robot extends TimedRobot {
 
   public RobotContainer m_robotContainer;
   private ArcadeDrive m_arcadeDrive;
+  private BarLevelerMove m_barLevelerMove;
   
 
   /**
@@ -101,6 +104,9 @@ public class Robot extends TimedRobot {
     m_arcadeDrive = new ArcadeDrive(m_robotContainer.driveTrain, m_robotContainer.driver);
     m_arcadeDrive.execute();
 
+    m_barLevelerMove = new BarLevelerMove(m_robotContainer.barLeveler, m_robotContainer.driver);
+    m_barLevelerMove.execute();
+
     m_robotContainer.enableAutoIndexing();
    
   }
@@ -111,6 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     m_arcadeDrive.execute();
+    m_barLevelerMove.execute();
   }
 
   @Override

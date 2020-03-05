@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Timer;
@@ -64,9 +65,16 @@ public class DriveTrain extends SubsystemBase {
     frontLeftTalon.configSupplyCurrentLimit(supConfig);
     backRightTalon.configSupplyCurrentLimit(supConfig);
     backLeftTalon.configSupplyCurrentLimit(supConfig);
-
     topRightTalon.configSupplyCurrentLimit(supConfig);
     topLeftTalon.configSupplyCurrentLimit(supConfig);
+
+    frontRightTalon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    frontLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    backRightTalon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    backLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    topRightTalon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+    topLeftTalon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 10);
+
    }
 
    public void arcade(XboxController driver){
