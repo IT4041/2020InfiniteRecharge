@@ -15,6 +15,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.groups.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.components.*;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -52,6 +53,11 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+    // Configure default commands
+    // Set the default drive command to split-stick arcade drive
+    driveTrain.setDefaultCommand(new RunCommand(() -> driveTrain.arcade(driver)));
+
   }
 
   /**
@@ -82,7 +88,6 @@ public class RobotContainer {
 
     buttonBumperRight_as.whenPressed((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsBack(intakeWheels));
     buttonBumperRight_as.whenReleased((edu.wpi.first.wpilibj2.command.Command)new IntakeWheelsPrevState(intakeWheels));
-
 
   }
 
