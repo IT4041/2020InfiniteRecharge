@@ -50,9 +50,7 @@ public class Constants {
       }
 
     public static final class ElevatorPositions {
-        public static final int Top = 5000;
+        public static final int Top =  500000; //752000 actual number;
         public static final int Home = 0;
     }
-
-    
 }
