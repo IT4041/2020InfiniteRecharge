@@ -48,8 +48,7 @@ public class RobotMap {
 	//end Elevator Arm
 
 	//Elevator
-	public static final int ElevatorTalon1 = 1; //PDP:??
-	public static final int ElevatorTalon2 = 3; //PDP:??
+	public static final int ElevatorTalon = 5; //PDP:??
 	//end Elevator
 
 	//Bar Leveler
