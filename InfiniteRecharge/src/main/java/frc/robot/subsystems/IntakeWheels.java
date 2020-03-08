@@ -46,12 +46,12 @@ public class IntakeWheels extends SubsystemBase {
   }
 
   public void on(){
-    talon.set(ControlMode.PercentOutput, 0.65);
+    talon.set(ControlMode.PercentOutput, 0.85);
     wheelsOn = true;
   }
 
   public void reverse(){
-    talon.set(ControlMode.PercentOutput, -0.65);
+    talon.set(ControlMode.PercentOutput, -0.85);
   }
 
   public void off(){

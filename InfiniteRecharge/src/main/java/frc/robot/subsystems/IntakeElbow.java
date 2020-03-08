@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
@@ -22,6 +23,9 @@ public class IntakeElbow extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
   private double home, down;
   private float kForwardSoftLimit, kReverseSoftLimit;
+  private CANEncoder encoder;
+  private boolean done = false;
+
 
   /**
    * Creates a new IntakeElbow.
@@ -80,14 +84,19 @@ public class IntakeElbow extends SubsystemBase {
   @Override
   public void periodic() {
     // // This method will be called once per scheduler run
+    encoder = sparkMax.getEncoder();
+    if (Math.abs(encoder.getPosition() / kReverseSoftLimit) > 0.96){
+      done = true;
+    }
   }
 
   public void home(){
     pidController.setReference(home, ControlType.kPosition);
   }
 
-  public void down(){
+  public boolean down(){
     pidController.setReference(down, ControlType.kPosition);
+    return done;
   }
 
 }

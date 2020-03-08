@@ -54,10 +54,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    // Configure default commands
-    // Set the default drive command to split-stick arcade drive
-    driveTrain.setDefaultCommand(new RunCommand(() -> driveTrain.arcade(driver)));
-
   }
 
   /**
@@ -99,7 +95,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     // return m_autoCommand;
-    return new WeekZeroAuto(bombardier, driveTrain);
+    return new RightTrench(bombardier, driveTrain, intakeWheels, intakeElbow);
   }
 
   public void disabledLEDS(){

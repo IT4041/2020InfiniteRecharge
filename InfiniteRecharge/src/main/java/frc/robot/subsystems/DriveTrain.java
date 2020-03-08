@@ -14,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.RobotMap;
@@ -34,6 +33,10 @@ public class DriveTrain extends SubsystemBase {
    private final WPI_TalonFX topLeftTalon = new WPI_TalonFX(RobotMap.TopLeftTalon);
    private NavX m_NavX;
   
+    private double circumference = 18.8496;                               
+    private double pulsesPerRevolution = 2048;
+    private double finalGearRatio = 8.4;
+    private double distancePerPulse = circumference/(pulsesPerRevolution * finalGearRatio);
 
    //groups the motor controllers into left and right groups
    private final SpeedControllerGroup rightSCG = new SpeedControllerGroup(frontRightTalon, backRightTalon, topRightTalon);
@@ -87,11 +90,53 @@ public class DriveTrain extends SubsystemBase {
     robotDrive.arcadeDrive(speed, turn, true);
   }
 
-  public boolean driveFoward(){
-    robotDrive.arcadeDrive(.4, 0.0, true);
-    Timer.delay(2);
-    robotDrive.arcadeDrive(0.0, 0.0, true);
-    return true;
+  public void tankDrive(double leftSpeed, double rightSpeed) {
+    robotDrive.tankDrive(leftSpeed, rightSpeed);
   }
+
+  public void autoDrive(double speed, double rotation, boolean quickTurn) {
+    robotDrive.curvatureDrive(speed, rotation, quickTurn);
+  }
+
+  public void stop(){
+    robotDrive.stopMotor();
+  }
+
+  public double getLeftEncoderDistance() 
+    { //distance returned is in inches
+    	return topLeftTalon.getSelectedSensorPosition(0) * distancePerPulse;
+    }
+    	
+    public double getRightEncoderDistance() 
+    { //distance returned is in inches
+    	return topRightTalon.getSelectedSensorPosition(0) * distancePerPulse;
+    }    
+
+    public void resetLeftEncoder() 
+    {
+    	topLeftTalon.setSelectedSensorPosition(0, 0, 10);
+    }
+
+    public void resetRightEncoder() 
+    {
+      topRightTalon.setSelectedSensorPosition(0, 0, 10);    }
+  
+    public double getGyroAngle() 
+    {
+      //converts yaw(-180 to 180) to a value from -1 to 1
+    	return m_NavX.getYaw();
+    }
+    
+    public double getGyroAngleConverted() 
+    {
+      //converts yaw(-180 to 180) to a value from -1 to 1
+    	return m_NavX.getYaw()/180;
+    }
+
+    public void resetGyro()
+    {
+    	m_NavX.reset();
+    }
+  
 
 }

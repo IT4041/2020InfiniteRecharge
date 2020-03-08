@@ -66,4 +66,8 @@ public class NavX extends SubsystemBase {
     return navX.getYaw();
   }
 
+  public void reset(){
+    navX.reset();
+  }
+
 }

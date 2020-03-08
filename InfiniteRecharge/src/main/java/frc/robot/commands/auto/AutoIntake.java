@@ -8,20 +8,22 @@
 package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.IntakeElbow;
+import frc.robot.subsystems.IntakeWheels;
 
-public class DriveFoward extends CommandBase {
-  /**
-   * Creates a new driveFoward.
-   */
-
-  private final DriveTrain m_Drive;
+public class AutoIntake extends CommandBase {
+  private final IntakeElbow m_IntakeElbow;
+  private final IntakeWheels m_IntakeWheels;
   private boolean done = false;
-
-  public DriveFoward(DriveTrain in_drive) {
+  /**
+   * Creates a new AutoIntake.
+   */
+  public AutoIntake(IntakeElbow in_IntakeElbow, IntakeWheels in_IntakeWheels) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_Drive = in_drive;
-    addRequirements(m_Drive);
+    m_IntakeWheels = in_IntakeWheels;
+    m_IntakeElbow = in_IntakeElbow;
+    addRequirements(m_IntakeElbow);
+    addRequirements(m_IntakeWheels);
   }
 
   // Called when the command is initially scheduled.
@@ -32,7 +34,8 @@ public class DriveFoward extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    done = m_Drive.driveFoward();
+    m_IntakeWheels.on();
+    done = m_IntakeElbow.down();
   }
 
   // Called once the command ends or is interrupted.
