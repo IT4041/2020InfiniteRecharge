@@ -25,8 +25,8 @@ public class RightTrench extends SequentialCommandGroup {
           new TurnToAngle(in_drive, -35, 0.325), 
           new DriveStraight(in_drive, 72, 0.25), 
           new TurnToAngle(in_drive, 0, 0.325),
-          new AutoIntake(in_Elbow, in_IntakeWheels), 
-          new DriveStraight(in_drive, 95, 0.2));
+          new AutoIntake(in_Elbow, in_IntakeWheels));//, 
+          //new DriveStraight(in_drive, 95, 0.2));
     //super(new ShootPreloaded(in_Bombardier), new TurnToAngle(in_drive, -45), new DriveStraight(in_drive, 3, 0.4));
 
   }
