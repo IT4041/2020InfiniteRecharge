@@ -29,7 +29,7 @@ public class Turret extends SubsystemBase {
   private final double dptp = pptr/360; // degrees per turret pulse
   private double m_xOffset = 0.0; // x offset reported by limelight
   private final int maxOffset = -6000;// Maximum x offset allow
-  private final int tolerance = 100;
+  private final int tolerance = 65;
 
   public Turret() {
     //pulse per revolution = 4096
@@ -134,7 +134,7 @@ public class Turret extends SubsystemBase {
 
   public boolean onTarget(){
     // is the pid reporting that on the setpoint within the tolerance
-    return talon.getClosedLoopError() < tolerance;
+    return Math.abs(talon.getClosedLoopError()) < tolerance;
   }
 
   // end vision functions *******************************************************************
